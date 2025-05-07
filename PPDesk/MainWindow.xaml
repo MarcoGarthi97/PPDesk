@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="PPDesk.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PPDesk"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:winui="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    mc:Ignorable="d"
+    Title="PPDesk">
+
+    <winui:NavigationView
+      x:Name="NavView"
+      IsPaneOpen="False"
+      PaneDisplayMode="Left"
+      IsBackButtonVisible="Visible"
+      SelectionChanged="NavView_SelectionChanged">
+
+        <!-- Definizione delle voci di menu -->
+        <winui:NavigationView.MenuItems>
+            <winui:NavigationViewItem Content="Home" Icon="Home" Tag="homePage"/>
+            <winui:NavigationViewItem Content="Impostazioni" Icon="Setting" Tag="settingsPage"/>
+            <winui:NavigationViewItem Content="Info" Icon="Help" Tag="aboutPage"/>
+        </winui:NavigationView.MenuItems>
+
+        <!-- Area di contenuto dove caricare le pagine -->
+        <Frame x:Name="ContentFrame">
+            <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
+        </Frame>
+
+
+    </winui:NavigationView>
+    
+
+</Window>
