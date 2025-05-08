@@ -59,7 +59,7 @@ namespace PPDesk
 
         private void ConfigureServices(IServiceCollection services)
         {
-
+             
         }
 
         private Window? m_window;
