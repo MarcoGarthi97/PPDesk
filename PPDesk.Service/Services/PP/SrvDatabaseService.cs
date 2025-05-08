@@ -33,11 +33,11 @@ namespace PPDesk.Service.Services.PP
 
         public async Task CreateTablesAsync()
         {
-            await _versionService.CreateTableVersionAsync();
             string version = await _versionService.GetVersionAsync();
 
             if(string.IsNullOrEmpty(version))
             {
+                await _versionService.CreateTableVersionAsync();
                 await _userService.CreateTableUsersAsync();
                 await _tableService.CreateTableTablesAsync();
                 await _tableUserService.CreateTableTableUsersAsync();

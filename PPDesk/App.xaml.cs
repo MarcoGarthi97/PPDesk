@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using PPDesk.Repository.Factory;
 using PPDesk.Service.Services.PP;
+using AutoMapper;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -67,6 +68,9 @@ namespace PPDesk
 
         private void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(App).Assembly,
+                          typeof(SrvVersionService).Assembly);
+
             services.AddSharedLibraryServices();
             services.AddSharedLibraryRepositories();
 
@@ -74,6 +78,7 @@ namespace PPDesk
             var connectionString = $"Data Source={dbPath}";
             services.AddSingleton<IDatabaseConnectionFactory>(provider =>
                 new MdlSqliteConnectionFactory(connectionString));
+
         }
 
         private async Task InizializeDatabase()
