@@ -13,9 +13,6 @@
       "ClientSecret": "",
       "PrivateToken": "",
       "PublicToken": ""
-    },
-    "SqlConfig": {
-      "dbPath": ""
     }
   }
 }

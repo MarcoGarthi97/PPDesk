@@ -17,6 +17,12 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using PPDesk.Service.Collection;
+using PPDesk.Repository.Collection;
+using System.Threading.Tasks;
+using Windows.Storage;
+using PPDesk.Repository.Factory;
+using PPDesk.Service.Services.PP;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,15 +42,17 @@ namespace PPDesk
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-
             _host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    // Registrazione dei servizi
                     ConfigureServices(services);
                 })
                 .Build();
+
+
+            InizializeDatabase().Wait();
+
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -59,7 +67,21 @@ namespace PPDesk
 
         private void ConfigureServices(IServiceCollection services)
         {
+            services.AddSharedLibraryServices();
+            services.AddSharedLibraryRepositories();
 
+            string dbPath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "app.db");
+            var connectionString = $"Data Source={dbPath}";
+            services.AddSingleton<IDatabaseConnectionFactory>(provider =>
+                new MdlSqliteConnectionFactory(connectionString));
+        }
+
+        private async Task InizializeDatabase()
+        {
+            await ApplicationData.Current.LocalFolder.CreateFileAsync("app.db", CreationCollisionOption.OpenIfExists);            
+
+            var databaseService = _host.Services.GetRequiredService<ISrvDatabaseService>();
+            await databaseService.CreateTablesAsync();
         }
 
         private Window? m_window;

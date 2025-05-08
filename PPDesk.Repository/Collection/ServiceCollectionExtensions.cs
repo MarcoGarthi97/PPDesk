@@ -7,11 +7,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PPDesk.Service.Collection
+namespace PPDesk.Repository.Collection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSharedLibraryServices(this IServiceCollection services)
+        public static IServiceCollection AddSharedLibraryRepositories(this IServiceCollection services)
         {
             services.Scan(scan => scan
             .FromAssemblies(Assembly.GetExecutingAssembly())

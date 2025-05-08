@@ -14,8 +14,7 @@
       x:Name="NavView"
       IsPaneOpen="False"
       PaneDisplayMode="Left"
-      IsBackButtonVisible="Visible"
-      SelectionChanged="NavView_SelectionChanged">
+      IsBackButtonVisible="Visible">
 
         <!-- Definizione delle voci di menu -->
         <winui:NavigationView.MenuItems>
