@@ -1,0 +1,18 @@
+﻿{
+  "profiles": {
+    "PPDesk (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PPDesk (Unpackaged)": {
+      "commandName": "Project"
+    }
+  },
+  "App": {
+    "EventBriteApiKey": {
+      "ApiKey": "",
+      "ClientSecret": "",
+      "PrivateToken": "",
+      "PublicToken": ""
+    }
+  }
+}
