@@ -36,7 +36,7 @@ namespace PPDesk.Service.Services.Eventbrite
                         listener.Prefixes.Add(SrvEApiKeyStorage.Configuration.RedirectUri + "/");
                         listener.Start();
 
-                        var authUrl = $"https://www.eventbrite.com/oauth/authorize?response_type=code&client_id={SrvEApiKeyStorage.Configuration.ApiKey}&redirect_uri={Uri.EscapeDataString(SrvEApiKeyStorage.Configuration.RedirectUri)}";
+                        var authUrl = $"https://www.eventbrite.com/oauth/authorize?response_type=code&client_id={SrvEApiKeyStorage.Configuration.ApiKey}&redirect_uri={Uri.EscapeDataString(SrvEApiKeyStorage.Configuration.RedirectUri)}"; 
                         Process.Start(new ProcessStartInfo { FileName = authUrl, UseShellExecute = true });  
 
                         var context = listener.GetContext(); 
