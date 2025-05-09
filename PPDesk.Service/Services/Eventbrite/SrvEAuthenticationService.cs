@@ -44,7 +44,7 @@ namespace PPDesk.Service.Services.Eventbrite
 
                         listener.Stop(); 
 
-                        code = context.Request.QueryString["code"]; 
+                        code = context.Request.QueryString["code"];  
 
                         using var http = new HttpClient();
                         var values = new Dictionary<string, string>
