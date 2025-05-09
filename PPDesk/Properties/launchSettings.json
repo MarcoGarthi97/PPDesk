@@ -12,7 +12,8 @@
       "ApiKey": "",
       "ClientSecret": "",
       "PrivateToken": "",
-      "PublicToken": ""
+      "PublicToken": "",
+      "RedirectUri": ""
     }
   }
 }

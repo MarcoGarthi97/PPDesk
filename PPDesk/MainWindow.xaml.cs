@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
@@ -13,6 +14,8 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using PPDesk.Service.Services.Eventbrite;
+using PPDesk.Service.Services.Window;
 using RestSharp;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -27,14 +30,16 @@ namespace PPDesk
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly ISrvMainWindow _service;
+        public MainWindow(ISrvMainWindow service)
         {
             this.InitializeComponent();
+            _service = service;
         }
 
         private void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
-        }        
+        }       
     }
 }
