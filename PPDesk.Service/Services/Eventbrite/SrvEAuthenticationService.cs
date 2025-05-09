@@ -42,7 +42,7 @@ namespace PPDesk.Service.Services.Eventbrite
                         var context = listener.GetContext(); 
                         tcs.SetResult(context);
 
-                        listener.Stop();
+                        listener.Stop(); 
 
                         code = context.Request.QueryString["code"]; 
 
