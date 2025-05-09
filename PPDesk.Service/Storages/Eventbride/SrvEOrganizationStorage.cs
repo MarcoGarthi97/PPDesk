@@ -9,15 +9,11 @@ namespace PPDesk.Service.Storages.Eventbride
 {
     public static class SrvEOrganizationStorage
     {
-    }
+        public static IEnumerable<SrvEOrganization> Organizations { get; private set; }
 
-    public static class SrvEApiKeyStorage
-    {
-        public static SrvEApiKey Configuration { get; private set; }
-        
-        public static void SetpiKeyStorage(SrvEApiKey srvEApiKey)
+        public static void SetOrganizations(IEnumerable<SrvEOrganization> organizations)
         {
-            Configuration = srvEApiKey;
+            Organizations = organizations;
         }
     }
 }

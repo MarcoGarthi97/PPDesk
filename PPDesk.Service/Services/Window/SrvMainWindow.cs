@@ -10,21 +10,21 @@ namespace PPDesk.Service.Services.Window
 {
     public interface ISrvMainWindow : IForServiceCollectionExtension
     {
-        Task TestAuth();
+        Task Test();
     }
 
     public class SrvMainWindow : ISrvMainWindow
     {
-        private readonly ISrvEAuthenticationService _eAuthenticationService;
+        private readonly ISrvEOrganizationService _eOrganizationService;
 
-        public SrvMainWindow(ISrvEAuthenticationService eAuthenticationService)
+        public SrvMainWindow(ISrvEOrganizationService eOrganizationService)
         {
-            _eAuthenticationService = eAuthenticationService;
+            _eOrganizationService = eOrganizationService;
         }
 
-        public async Task TestAuth()
+        public async Task Test()
         {
-            await _eAuthenticationService.GetAuthenticationTestAsync();
+            await _eOrganizationService.LoadOrganizationsAsync();
         }
     }
 }

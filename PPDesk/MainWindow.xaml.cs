@@ -40,6 +40,8 @@ namespace PPDesk
         private void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
+
+            _service.Test().Wait();
         }       
     }
 }

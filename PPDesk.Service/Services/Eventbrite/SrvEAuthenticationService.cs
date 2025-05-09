@@ -16,14 +16,14 @@ namespace PPDesk.Service.Services.Eventbrite
 {
     public interface ISrvEAuthenticationService : IForServiceCollectionExtension
     {
-        Task GetAuthenticationTestAsync();
+        Task GetAuthenticationAsync();
     }
 
     public class SrvEAuthenticationService : ISrvEAuthenticationService
     {
         public SrvEAuthenticationService() { }
 
-        public async Task GetAuthenticationTestAsync()
+        public async Task GetAuthenticationAsync()
         {
             try
             {
