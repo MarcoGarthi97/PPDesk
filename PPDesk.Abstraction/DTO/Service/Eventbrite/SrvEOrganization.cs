@@ -8,4 +8,5 @@ namespace PPDesk.Abstraction.DTO.Service.Eventbrite
         public string Name { get; set; }
         public DateTime Created { get; set; }
     }
+
 }

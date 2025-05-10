@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Response.Eventbride;
+using PPDesk.Abstraction.DTO.Response.Eventbride.Organization;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Storages.Eventbride;
@@ -38,8 +38,6 @@ namespace PPDesk.Service.Services.Eventbrite
 
         public async Task<IEnumerable<SrvEOrganization>> GetOrganizationsAsync()
         {
-            var tcs = new TaskCompletionSource<HttpListenerContext>();
-
             IEnumerable<SrvEOrganization> srvEOrganizations = new List<SrvEOrganization>();
 
             using (var listener = new HttpListener())
