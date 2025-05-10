@@ -19,12 +19,14 @@ namespace PPDesk.Service.Services.Window
         private readonly ISrvEAuthenticationService _eAuthenticationService;
         private readonly ISrvEOrganizationService _eOrganizationService;
         private readonly ISrvEEventService _eEventService;
+        private readonly ISrvEOrderService _eOrderService;
 
-        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService, ISrvEEventService eEventService)
+        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService, ISrvEEventService eEventService, ISrvEOrderService eOrderService)
         {
             _eOrganizationService = eOrganizationService;
             _eAuthenticationService = eAuthenticationService;
             _eEventService = eEventService;
+            _eOrderService = eOrderService;
         }
 
         public async Task Test()
@@ -32,6 +34,7 @@ namespace PPDesk.Service.Services.Window
             await _eAuthenticationService.GetAuthenticationAsync();
             await _eOrganizationService.LoadOrganizationsAsync();
             var events = await _eEventService.GetListEventsByOrganizationIdAsync();
+            var orders = await _eOrderService.GetListOrdersByOrganizationIdAsync();
         }
     }
 }

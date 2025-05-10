@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Response.Eventbride.Event;
+using PPDesk.Abstraction.DTO.Response.Eventbride.Order;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
+using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Storages.Eventbride;
 using RestSharp;
@@ -14,21 +15,21 @@ using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.Eventbrite
 {
-    public interface ISrvEEventService : IForServiceCollectionExtension
+    public interface ISrvEOrderService : IForServiceCollectionExtension
     {
-        Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync();
+        Task<IEnumerable<SrvEOrder>> GetListOrdersByOrganizationIdAsync();
     }
 
-    public class SrvEEventService : ISrvEEventService
+    public class SrvEOrderService : ISrvEOrderService
     {
         private readonly IMapper _mapper;
 
-        public SrvEEventService(IMapper mapper)
+        public SrvEOrderService(IMapper mapper)
         {
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync()
+        public async Task<IEnumerable<SrvEOrder>> GetListOrdersByOrganizationIdAsync()
         {
             using (var listener = new HttpListener())
             {
@@ -37,25 +38,25 @@ namespace PPDesk.Service.Services.Eventbrite
                 int pageNumber = 1;
                 bool hasMoreRecord = true;
 
-                List<SrvEEvent> srvEEvents = new List<SrvEEvent>();
+                List<SrvEOrder> srvEEorders = new List<SrvEOrder>();
 
                 var client = new RestClient("https://www.eventbriteapi.com/v3");
 
                 while (hasMoreRecord)
                 {
-                    var request = new RestRequest($"organizations/{organizationId}/events/?page={pageNumber}");
+                    var request = new RestRequest($"organizations/{organizationId}/orders/?page={pageNumber}&expand=attendees");
                     request.AddHeader("Authorization", $"Bearer {bearer}");
 
                     try
                     {
                         var response = await client.ExecuteGetAsync(request);
-                        var eventResponse = JsonSerializer.Deserialize<EEventsResponse>(response.Content);
+                        var orderResponse = JsonSerializer.Deserialize<EOrdersResponse>(response.Content);
 
-                        srvEEvents.AddRange(_mapper.Map<IEnumerable<SrvEEvent>>(eventResponse.Events));
+                        srvEEorders.AddRange(_mapper.Map<IEnumerable<SrvEOrder>>(orderResponse.Orders));
 
                         pageNumber++;
 
-                        if (!eventResponse.Pagination.HasMoreItems)
+                        if (!orderResponse.Pagination.HasMoreItems)
                         {
                             hasMoreRecord = false;
                         }
@@ -66,8 +67,7 @@ namespace PPDesk.Service.Services.Eventbrite
                     }
                 }
 
-
-                return srvEEvents;
+                return srvEEorders;
             }
         }
     }
