@@ -6,7 +6,7 @@ namespace PPDesk.Abstraction.DTO.Response.Eventbride
     public class EOrganizationResponse
     {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("created")]

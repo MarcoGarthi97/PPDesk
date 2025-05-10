@@ -3,27 +3,31 @@ using PPDesk.Service.Services.Eventbrite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.Window
 {
-    public interface ISrvMainWindow : IForServiceCollectionExtension
+    public interface ISrvMainWindowService : IForServiceCollectionExtension
     {
         Task Test();
     }
 
-    public class SrvMainWindow : ISrvMainWindow
+    public class SrvMainWindowService : ISrvMainWindowService
     {
+        private readonly ISrvEAuthenticationService _eAuthenticationService;
         private readonly ISrvEOrganizationService _eOrganizationService;
 
-        public SrvMainWindow(ISrvEOrganizationService eOrganizationService)
+        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService)
         {
             _eOrganizationService = eOrganizationService;
+            _eAuthenticationService = eAuthenticationService;
         }
 
         public async Task Test()
         {
+            await _eAuthenticationService.GetAuthenticationAsync();
             await _eOrganizationService.LoadOrganizationsAsync();
         }
     }

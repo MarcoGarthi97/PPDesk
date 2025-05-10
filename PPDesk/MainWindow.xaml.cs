@@ -30,18 +30,19 @@ namespace PPDesk
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        private readonly ISrvMainWindow _service;
-        public MainWindow(ISrvMainWindow service)
+        private readonly ISrvMainWindowService _service;
+        public MainWindow(ISrvMainWindowService service)
         {
             this.InitializeComponent();
             _service = service;
         }
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
+
+        private async void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
 
-            _service.Test().Wait();
-        }       
+            await _service.Test();
+        }
     }
 }

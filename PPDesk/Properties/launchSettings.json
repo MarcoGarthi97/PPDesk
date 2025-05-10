@@ -6,14 +6,5 @@
     "PPDesk (Unpackaged)": {
       "commandName": "Project"
     }
-  },
-  "App": {
-    "EventBriteApiKey": {
-      "ApiKey": "",
-      "ClientSecret": "",
-      "PrivateToken": "",
-      "PublicToken": "",
-      "RedirectUri": ""
-    }
   }
 }

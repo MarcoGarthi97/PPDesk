@@ -7,6 +7,7 @@ using RestSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace PPDesk.Service.Services.Eventbrite
             var organizations = await GetOrganizationsAsync();
 
             SrvEOrganizationStorage.SetOrganizations(organizations);
+            SrvAppConfigurationStorage.SetOrganization(organizations.First());
         }
 
         public async Task<IEnumerable<SrvEOrganization>> GetOrganizationsAsync()
@@ -40,31 +42,26 @@ namespace PPDesk.Service.Services.Eventbrite
 
             IEnumerable<SrvEOrganization> srvEOrganizations = new List<SrvEOrganization>();
 
-            await Task.Run(async () =>
+            using (var listener = new HttpListener())
             {
-                using (var listener = new HttpListener())
+                var bearer = SrvETokenStorage.Bearer;
+
+                var client = new RestClient("https://www.eventbriteapi.com/v3");
+                var request = new RestRequest($"users/me/organizations/");
+                request.AddHeader("Authorization", $"Bearer {bearer}");
+
+                try
                 {
-                    var bearer = SrvETokenStorage.Bearer;
+                    var response = await client.ExecuteGetAsync(request);
+                    var eOrganization = JsonSerializer.Deserialize<EOrganizationsResponse>(response.Content);
 
-                    var client = new RestClient("https://www.eventbriteapi.com/v3");
-                    var request = new RestRequest($"users/me/organizations/");
-                    request.AddHeader("Authorization", $"Bearer {bearer}");
-
-                    try
-                    {
-                        //TODO: Manca di fare l'autenticazione prima e salvare i dati della key del json
-                        var response = await client.ExecuteGetAsync(request);
-                        var eOrganization = JsonSerializer.Deserialize<EOrganizationsResponse>(response.Content);
-
-                        srvEOrganizations = _mapper.Map<IEnumerable<SrvEOrganization>>(eOrganization);
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
+                    srvEOrganizations = _mapper.Map<IEnumerable<SrvEOrganization>>(eOrganization.Organizations);
                 }
-            });
+                catch (Exception ex)
+                {
 
+                }
+            }
 
             return srvEOrganizations;
         }  
