@@ -13,7 +13,7 @@ namespace PPDesk.Service.Storages.Eventbride
 
         public static void SetOrganization(SrvEOrganization eOrganization)
         {
-            eOrganization = eOrganization;
+            EOrganization = eOrganization;
         }
     }
 }

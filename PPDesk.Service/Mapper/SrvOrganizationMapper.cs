@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Response.Eventbride;
+using PPDesk.Abstraction.DTO.Response.Eventbride.Organization;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using System;
 using System.Collections.Generic;

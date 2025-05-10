@@ -18,17 +18,20 @@ namespace PPDesk.Service.Services.Window
     {
         private readonly ISrvEAuthenticationService _eAuthenticationService;
         private readonly ISrvEOrganizationService _eOrganizationService;
+        private readonly ISrvEEventService _eEventService;
 
-        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService)
+        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService, ISrvEEventService eEventService)
         {
             _eOrganizationService = eOrganizationService;
             _eAuthenticationService = eAuthenticationService;
+            _eEventService = eEventService;
         }
 
         public async Task Test()
         {
             await _eAuthenticationService.GetAuthenticationAsync();
             await _eOrganizationService.LoadOrganizationsAsync();
+            var events = await _eEventService.GetListEventsByOrganizationIdAsync();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace PPDesk.Abstraction.DTO.Response.Eventbride
+namespace PPDesk.Abstraction.DTO.Response.Eventbride.Organization
 {
     public class EOrganizationResponse
     {
