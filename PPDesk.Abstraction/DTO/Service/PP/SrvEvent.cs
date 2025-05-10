@@ -1,4 +1,4 @@
-﻿namespace PPDesk.Abstraction.DTO.Service
+﻿namespace PPDesk.Abstraction.DTO.Service.PP
 {
     public class SrvEvent
     {

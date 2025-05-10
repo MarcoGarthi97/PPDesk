@@ -12,12 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="Scrutor" Version="6.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mapper\" />
-    <Folder Include="Services\Eventbrite\" />
-    <Folder Include="Storages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PPDesk.Abstraction\PPDesk.Abstraction.csproj" />
