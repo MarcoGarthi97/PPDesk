@@ -12,4 +12,10 @@ namespace PPDesk.Abstraction.Enum
         Started = 1,
         Ended = 2,
     }
+
+    public enum EnumTableType
+    {
+        SessioneGdr = 0,
+        Multitavolo = 1,
+    }
 }
