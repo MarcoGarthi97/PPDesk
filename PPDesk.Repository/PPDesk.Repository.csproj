@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
     <PackageReference Include="Scrutor" Version="6.0.1" />
+    <PackageReference Include="Z.Dapper.Plus" Version="7.5.12" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PPDesk.Abstraction\PPDesk.Abstraction.csproj" />
