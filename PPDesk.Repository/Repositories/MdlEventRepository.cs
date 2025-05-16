@@ -21,7 +21,7 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync($"CREATE TABLE EVENTS (" +
-                $"Id IDENTITY PRIMARY KEY," +
+                $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 $"Name VARCHAR(255) NOT NULL)");
         }
     }

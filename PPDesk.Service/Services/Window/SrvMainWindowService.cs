@@ -36,15 +36,7 @@ namespace PPDesk.Service.Services.Window
 
         public async Task Test()
         {
-            await _tableService.DeleteAllTablesAsync();
-            await _eAuthenticationService.GetAuthenticationAsync();
-            await _eOrganizationService.LoadOrganizationsAsync();
-            var events = await _eEventService.GetListEventsByOrganizationIdAsync();
-            //var orders = await _eOrderService.GetListOrdersByOrganizationIdAsync();
-            var ticketClasses = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(events.Select(x => x.Id));
-            var tables = _tableService.GetTablesByETicketClasses(ticketClasses);
-            await _tableService.InsertTablesAsync(tables);
-            var tablessss = await _tableService.GetAllTablesAsync();
+            
         }
     }
 }
