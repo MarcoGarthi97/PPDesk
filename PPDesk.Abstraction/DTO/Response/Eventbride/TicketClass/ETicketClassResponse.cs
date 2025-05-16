@@ -29,6 +29,9 @@ namespace PPDesk.Abstraction.DTO.Response.Eventbride.TicketClass
 
         [JsonPropertyName("quantity_sold")]
         public int QuantitySold { get; set; }
+
+        [JsonPropertyName("sales_end")]
+        public DateTime SalesEnd { get; set; }
     }
 
 }
