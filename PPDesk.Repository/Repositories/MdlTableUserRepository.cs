@@ -21,7 +21,7 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync($"CREATE TABLE TABLEUSERS (" +
-                $"Id IDENTITY PRIMARY KEY," +
+                $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 $"TableId INT NOT NULL," +
                 $"UserId INT NOT NULL," +
                 $"TypeUser SMALLINT NOT NULL)");
