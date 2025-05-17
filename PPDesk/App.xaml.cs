@@ -29,6 +29,9 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Service.Storages.Eventbride;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using Z.Dapper.Plus;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -102,6 +105,13 @@ namespace PPDesk
 
             var databaseService = _host.Services.GetRequiredService<ISrvDatabaseService>();
             await databaseService.CreateTablesAsync();
+
+            ConfigurationDatabase();
+        }
+
+        private void ConfigurationDatabase()
+        {
+            RepositoryCollectionExtension.ConfigurationDatabase();
         }
 
         private void LoadConfigurations(IConfiguration config)

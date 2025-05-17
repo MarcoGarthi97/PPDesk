@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PPDesk.Abstraction.DTO.Repository
 {
-    [Table("Users")]
+    [Table("USERS")]
     public class MdlUser
     {
         [Key]

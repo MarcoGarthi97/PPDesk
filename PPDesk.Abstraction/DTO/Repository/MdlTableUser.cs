@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PPDesk.Abstraction.DTO.Repository
 {
-    [Table("TableUsers")]
+    [Table("TABLEUSERS")]
     public class MdlTableUser
     {
         [Key]
