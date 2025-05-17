@@ -1,11 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PPDesk.Abstraction.DTO.Repository;
 using PPDesk.Abstraction.Helper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Z.Dapper.Plus;
 
 namespace PPDesk.Repository.Collection
 {
@@ -25,6 +29,38 @@ namespace PPDesk.Repository.Collection
             );
 
             return services;
+        }
+    }
+
+    public static class RepositoryCollectionExtension
+    {
+        public static void ConfigurationDatabase()
+        {
+            ConfigureInserts();
+        }
+
+        private static void ConfigureInserts()
+        {
+            DapperPlusManager.Entity<MdlTable>()
+            .Table("TABLES")
+            .UseBulkOptions(options => {
+                options.IgnoreOnInsertExpression = x => new { x.Id };
+            });
+            DapperPlusManager.Entity<MdlTableUser>()
+            .Table("TABLEUSERS")
+            .UseBulkOptions(options => {
+                options.IgnoreOnInsertExpression = x => new { x.Id };
+            });
+            DapperPlusManager.Entity<MdlUser>()
+            .Table("USERS")
+            .UseBulkOptions(options => {
+                options.IgnoreOnInsertExpression = x => new { x.Id };
+            });
+            DapperPlusManager.Entity<MdlEvent>()
+            .Table("EVENTS")
+            .UseBulkOptions(options => {
+                options.IgnoreOnInsertExpression = x => new { x.Id };
+            });
         }
     }
 }

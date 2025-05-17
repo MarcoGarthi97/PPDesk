@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PPDesk.Abstraction.DTO.Repository
 {
-    [Table("Version")]
+    [Table("VERSION")]
     public class MdlVersion
     {
         [Column("Version")]

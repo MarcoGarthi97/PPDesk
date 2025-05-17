@@ -48,12 +48,6 @@ namespace PPDesk.Repository.Repositories
 
         public async Task InsertTablesAsync(IEnumerable<MdlTable> tables)
         {
-            DapperPlusManager.Entity<MdlTable>()
-            .Table("TABLES")
-            .UseBulkOptions(options => {
-                options.IgnoreOnInsertExpression = x => new { x.Id };
-            });
-
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(tables);
         }
