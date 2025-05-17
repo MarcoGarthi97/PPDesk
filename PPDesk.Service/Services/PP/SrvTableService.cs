@@ -54,7 +54,7 @@ namespace PPDesk.Service.Services.PP
                     temp.IdEventbride = Convert.ToInt64(ticketClass.Id);
                     temp.QuantitySold = ticketClass.QuantitySold;
                     temp.Capacity = ticketClass.Capacity;
-                    temp.EventId = Convert.ToInt64(ticketClass.EventId);
+                    temp.EventIdEventbride = Convert.ToInt64(ticketClass.EventId);
 
                     tables.Add(temp);
                 }

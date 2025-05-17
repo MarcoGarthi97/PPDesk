@@ -7,7 +7,7 @@ namespace PPDesk.Abstraction.DTO.Service.PP
     {
         public int Id { get; set; }
         public long IdEventbride { get; set; }
-        public long EventId { get; set; }
+        public long EventIdEventbride { get; set; }
         public string GdrName { get; set; }
         public string Description { get; set; }
         public short Capacity { get; set; }

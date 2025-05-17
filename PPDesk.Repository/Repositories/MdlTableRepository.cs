@@ -32,7 +32,7 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE TABLES ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                EventId BIGINT NOT NULL,
+                EventIdEventbride BIGINT NOT NULL,
                 IdEventbride BIGINT NOT NULL,
                 GdrName NVARCHAR(255), 
                 Description NVARCHAR(255),
