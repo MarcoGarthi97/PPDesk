@@ -8,12 +8,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Z.BulkOperations.Internal.InformationSchema;
+using Z.Dapper.Plus;
 
 namespace PPDesk.Repository.Repositories
 {
     public interface IMdlUserRepository : IForServiceCollectionExtension
     {
         Task CreateTableUsersAsync();
+        Task DeleteAllUsersAsync();
+        Task<IEnumerable<MdlUser>> GetUsersAsync(int page, int limit);
+        Task InsertUsersAsync(IEnumerable<MdlUser> users);
     }
 
     public class MdlUserRepository : BaseRepository<MdlUser>, IMdlUserRepository
@@ -27,7 +32,40 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync($"CREATE TABLE USERS (" +
                 $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                $"Name VARCHAR(255) NOT NULL)");
+                $"FirstName VARCHAR(255)," +
+                $"LastName VARCHAR(255)," +
+                $"Name VARCHAR(255) NOT NULL," +
+                $"CellPhone VARCHAR(25)," +
+                $"Email VARCHAR(255))");
+        }
+
+        public async Task<IEnumerable<MdlUser>> GetUsersAsync(int page, int limit)
+        {
+            int offset = page * limit;
+            string sql = "SELECT * FROM USERS " +
+                "ORDER BY NAME ASC " +
+                "LIMIT @limit OFFSET @offset;";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            return await connection.QueryAsync<MdlUser>(sql, new
+            {
+                limit,
+                offset
+            });
+        }
+
+        public async Task InsertUsersAsync(IEnumerable<MdlUser> users)
+        {
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.BulkInsertAsync(users);
+        }
+
+        public async Task DeleteAllUsersAsync()
+        {
+            string sql = "DELETE FROM USERS;";
+            var connection = await _connectionFactory.CreateConnectionAsync();
+
+            await connection.ExecuteAsync(sql);
         }
     }
 }

@@ -17,26 +17,27 @@ namespace PPDesk.Service.Services.Window
 
     public class SrvMainWindowService : ISrvMainWindowService
     {
-        private readonly ISrvEAuthenticationService _eAuthenticationService;
         private readonly ISrvEOrganizationService _eOrganizationService;
-        private readonly ISrvEEventService _eEventService;
         private readonly ISrvEOrderService _eOrderService;
-        private readonly ISrvETicketClassService _eTicketClassService;
-        private readonly ISrvTableService _tableService;
+        private readonly ISrvUserService _userService;
 
-        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEAuthenticationService eAuthenticationService, ISrvEEventService eEventService, ISrvEOrderService eOrderService, ISrvETicketClassService eTicketClassService, ISrvTableService tableService)
+        public SrvMainWindowService(ISrvEOrganizationService eOrganizationService, ISrvEOrderService eOrderService, ISrvUserService userService)
         {
             _eOrganizationService = eOrganizationService;
-            _eAuthenticationService = eAuthenticationService;
-            _eEventService = eEventService;
             _eOrderService = eOrderService;
-            _eTicketClassService = eTicketClassService;
-            _tableService = tableService;
+            _userService = userService;
         }
 
         public async Task Test()
         {
-            
+            try
+            {
+                var users = await _userService.GetUsersAsync(0);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

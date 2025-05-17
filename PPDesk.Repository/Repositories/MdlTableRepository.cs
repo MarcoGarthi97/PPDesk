@@ -34,15 +34,15 @@ namespace PPDesk.Repository.Repositories
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 EventId BIGINT NOT NULL,
                 IdEventbride BIGINT NOT NULL,
-                GdrName NVARCHAR(255), --oppure specifica una lunghezza come NVARCHAR(255) se preferisci
+                GdrName NVARCHAR(255), 
                 Description NVARCHAR(255),
                 Capacity SMALLINT NOT NULL,
                 QuantitySold SMALLINT NOT NULL,
                 StartDate DATETIME NOT NULL,
                 EndDate DATETIME NOT NULL,
                 Master NVARCHAR(255),
-                Status SMALLINT NOT NULL, --Enum rappresentato come INT
-                Type SMALLINT NOT NULL-- Enum rappresentato come INT
+                Status SMALLINT NOT NULL, 
+                Type SMALLINT NOT NULL
                 )");
         }
 
@@ -54,7 +54,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlTable>> GetAllTablesAsync()
         {
-            string sql = "SELECT * FROM Tables;";
+            string sql = "SELECT * FROM TABLES;";
             var connection = await _connectionFactory.CreateConnectionAsync();
 
             return await connection.QueryAsync<MdlTable>(sql);
@@ -62,7 +62,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task DeleteAllTablesAsync()
         {
-            string sql = "DELETE FROM Tables;";
+            string sql = "DELETE FROM TABLES;";
             var connection = await _connectionFactory.CreateConnectionAsync();
 
             await connection.ExecuteAsync(sql);

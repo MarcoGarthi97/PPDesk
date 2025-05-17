@@ -13,6 +13,14 @@ namespace PPDesk.Abstraction.DTO.Repository
         [Key]
         [Column("Id")]
         public int Id { get; set; }
+        [Column("FirstName")]
+        public string FirstName { get; set; }
+        [Column("LastName")]
+        public string LastName { get; set; }
+        [Column("CellPhone")]
+        public string CellPhone { get; set; }
+        [Column("Email")]
+        public string Email { get; set; }
         [Column("Name")]
         public string Name { get; set; }
     }
