@@ -12,8 +12,8 @@ namespace PPDesk.Abstraction.DTO.Repository
         [Column("Id")]
         public int Id { get; set; }
 
-        [Column("EventId")]
-        public long EventId { get; set; }
+        [Column("EventIdEventbride")]
+        public long EventIdEventbride { get; set; }
 
         [Column("IdEventbride")]
         public long IdEventbride { get; set; }
