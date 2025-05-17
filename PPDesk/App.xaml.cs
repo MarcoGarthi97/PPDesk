@@ -108,6 +108,7 @@ namespace PPDesk
         {
             var apikey = config.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
             SrvEApiKeyStorage.SetpiKeyStorage(apikey);
+            SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
         }
 
         private Window? m_window;
