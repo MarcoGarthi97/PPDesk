@@ -16,7 +16,8 @@ namespace PPDesk.Service.Services.Eventbrite
 {
     public interface ISrvEEventService : IForServiceCollectionExtension
     {
-        Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync();
+        Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync(string filters = "");
+        Task<IEnumerable<SrvEEvent>> GetListLiveEventsByOrganizationIdAsync();
     }
 
     public class SrvEEventService : ISrvEEventService
@@ -28,12 +29,11 @@ namespace PPDesk.Service.Services.Eventbrite
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync()
+        private async Task<IEnumerable<SrvEEvent>> GetListEventsAsync(string url)
         {
             using (var listener = new HttpListener())
             {
                 string bearer = SrvETokenStorage.Bearer;
-                long organizationId = SrvAppConfigurationStorage.EOrganization.Id;
                 int pageNumber = 1;
                 bool hasMoreRecord = true;
 
@@ -43,7 +43,7 @@ namespace PPDesk.Service.Services.Eventbrite
 
                 while (hasMoreRecord)
                 {
-                    var request = new RestRequest($"organizations/{organizationId}/events/?page={pageNumber}");
+                    var request = new RestRequest($"{url}page={pageNumber}");
                     request.AddHeader("Authorization", $"Bearer {bearer}");
 
                     try
@@ -69,6 +69,17 @@ namespace PPDesk.Service.Services.Eventbrite
 
                 return srvEEvents;
             }
+        }
+
+        public async Task<IEnumerable<SrvEEvent>> GetListEventsByOrganizationIdAsync(string filters = "")
+        {
+            long organizationId = SrvAppConfigurationStorage.EOrganization.Id;
+            return await GetListEventsAsync($"organizations/{organizationId}/events/?{filters}");
+        }
+
+        public async Task<IEnumerable<SrvEEvent>> GetListLiveEventsByOrganizationIdAsync()
+        {
+            return await GetListEventsByOrganizationIdAsync("status=live&");
         }
     }
 }
