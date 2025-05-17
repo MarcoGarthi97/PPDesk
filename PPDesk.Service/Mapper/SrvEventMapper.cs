@@ -24,7 +24,6 @@ namespace PPDesk.Service.Mapper
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.IdEventbride, opt => opt.MapFrom(from => from.Id))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(from => SrvEnumHelper.ConvertStringToEnum<EnumEventStatus>(from.Status)))
-                //.ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.OrganizationId, opt => opt.MapFrom(from => Convert.ToInt64(from.OrganizationId)));
 
             CreateMap<SrvEvent, MdlEvent>().ReverseMap();

@@ -18,8 +18,8 @@ namespace PPDesk.Repository.Collection
                 options.IgnoreOnInsertExpression = x => new { x.Id };
                 options.BatchSize = 2000;
             });
-            DapperPlusManager.Entity<MdlTableUser>()
-            .Table("TABLEUSERS")
+            DapperPlusManager.Entity<MdlOrder>()
+            .Table("ORDERS")
             .UseBulkOptions(options => {
                 options.IgnoreOnInsertExpression = x => new { x.Id };
                 options.BatchSize = 2000;

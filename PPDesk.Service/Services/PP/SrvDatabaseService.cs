@@ -19,16 +19,16 @@ namespace PPDesk.Service.Services.PP
         private readonly ISrvUserService _userService;
         private readonly ISrvVersionService _versionService;
         private readonly ISrvTableService _tableService;
-        private readonly ISrvTableUserService _tableUserService;
+        private readonly ISrvOrderService _orderService;
         private readonly ISrvEventService _eventService;
 
-        public SrvDatabaseService(ISrvUserService userService, ISrvVersionService versionService, ISrvTableService tableService, ISrvTableUserService tableUserService, ISrvEventService eventService)
+        public SrvDatabaseService(ISrvUserService userService, ISrvVersionService versionService, ISrvTableService tableService, ISrvEventService eventService, ISrvOrderService orderService)
         {
             _userService = userService;
             _versionService = versionService;
             _tableService = tableService;
-            _tableUserService = tableUserService;
             _eventService = eventService;
+            _orderService = orderService;
         }
 
         public async Task CreateTablesAsync()
@@ -40,7 +40,7 @@ namespace PPDesk.Service.Services.PP
                 await _versionService.CreateTableVersionAsync();
                 await _userService.CreateTableUsersAsync();
                 await _tableService.CreateTableTablesAsync();
-                await _tableUserService.CreateTableTableUsersAsync();
+                await _orderService.CreateTableOrdersAsync();
                 await _eventService.CreateTableEventsAsync();
 
                 await _versionService.InsertVersionAsync();

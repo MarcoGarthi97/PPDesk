@@ -1,4 +1,5 @@
-﻿using PPDesk.Abstraction.Enum;
+﻿using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
+using PPDesk.Abstraction.Enum;
 using System;
 
 namespace PPDesk.Abstraction.DTO.Service.PP
