@@ -16,7 +16,7 @@ namespace PPDesk.Service.Services.PP
         Task CreateTableEventsAsync();
         Task DeleteAllEvents();
         Task<IEnumerable<SrvEvent>> GetEventsAsync(int page, int limit = 50);
-        IEnumerable<SrvEvent> GetEventsByEventbrideEvents(IEnumerable<SrvEEvent> eEvents);
+        IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents);
         Task InsertEventsAsync(IEnumerable<SrvEvent> srvEvents);
         Task UpdateEventsAsync(IEnumerable<SrvEvent> srvEvents);
     }
@@ -43,7 +43,7 @@ namespace PPDesk.Service.Services.PP
             return _mapper.Map<IEnumerable<SrvEvent>>(mdlEvents);
         }
 
-        public IEnumerable<SrvEvent> GetEventsByEventbrideEvents(IEnumerable<SrvEEvent> eEvents)
+        public IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents)
         {
             return _mapper.Map<IEnumerable<SrvEvent>>(eEvents);
         }

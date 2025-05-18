@@ -15,6 +15,7 @@ namespace PPDesk.Service.Services.PP
     public interface ISrvUserService : IForServiceCollectionExtension
     {
         Task<int> CountUsersAsync();
+        Task<int> CountUsersAsync(string name, string phone, string email);
         Task CreateTableUsersAsync();
         Task DeleteAllUsers();
         Task<IEnumerable<SrvUser>> GetAllUsersAsync();
@@ -62,6 +63,11 @@ namespace PPDesk.Service.Services.PP
         public async Task<int> CountUsersAsync()
         {
             return await _userRepository.CountUsersAsync();
+        }
+
+        public async Task<int> CountUsersAsync(string name, string phone, string email)
+        {
+            return await _userRepository.CountUsersAsync(name, phone, email);
         }
 
         public async Task InsertUsersAsync(IEnumerable<SrvUser> srvUsers)

@@ -16,6 +16,7 @@ namespace PPDesk.Repository.Repositories
     public interface IMdlUserRepository : IForServiceCollectionExtension
     {
         Task<int> CountUsersAsync();
+        Task<int> CountUsersAsync(string name, string phone, string email);
         Task CreateTableUsersAsync();
         Task DeleteAllUsersAsync();
         Task<IEnumerable<MdlUser>> GetAllUsersAsync();
@@ -46,6 +47,50 @@ namespace PPDesk.Repository.Repositories
             int offset = page * limit;
             string sql = "SELECT * FROM USERS WHERE 1 = 1";
 
+            sql += WhereUsers(name, phone, email);
+
+            sql += "ORDER BY Name ASC " +
+                "LIMIT @limit OFFSET @offset;";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            return await connection.QueryAsync<MdlUser>(sql, new
+            {
+                limit,
+                offset
+            });
+        }
+
+        public async Task<IEnumerable<MdlUser>> GetAllUsersAsync()
+        {
+            string sql = "SELECT * FROM USERS ORDER BY Name;";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            return await connection.QueryAsync<MdlUser>(sql);
+        }
+
+        public async Task<int> CountUsersAsync()
+        {
+            string sql = "SELECT Count(*) FROM USERS ;";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            return await connection.QuerySingleAsync<int>(sql);
+        }
+
+        public async Task<int> CountUsersAsync(string name, string phone, string email)
+        {
+            string sql = "SELECT * FROM USERS WHERE 1 = 1";
+
+            sql += WhereUsers(name, phone, email);
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+
+            return await connection.QuerySingleAsync<int>(sql);
+        }
+
+        private string WhereUsers(string name, string phone, string email)
+        {
+            string sql = "";
+
             if (!string.IsNullOrWhiteSpace(name))
             {
                 sql += "AND Name LIKE %@name%";
@@ -61,31 +106,7 @@ namespace PPDesk.Repository.Repositories
                 sql += "AND Email LIKE %@email%";
             }
 
-            sql += "ORDER BY Name ASC " +
-                "LIMIT @limit OFFSET @offset;";
-
-            var connection = await _connectionFactory.CreateConnectionAsync();
-            return await connection.QueryAsync<MdlUser>(sql, new
-            {
-                limit,
-                offset
-            });
-        }
-
-        public async Task<IEnumerable<MdlUser>> GetAllUsersAsync()
-        {
-            string sql = "SELECT * FROM USERS ;";
-
-            var connection = await _connectionFactory.CreateConnectionAsync();
-            return await connection.QueryAsync<MdlUser>(sql);
-        }
-
-        public async Task<int> CountUsersAsync()
-        {
-            string sql = "SELECT Count(*) FROM USERS ;";
-
-            var connection = await _connectionFactory.CreateConnectionAsync();
-            return await connection.QuerySingleAsync<int>(sql);
+            return sql;
         }
 
         public async Task InsertUsersAsync(IEnumerable<MdlUser> users)

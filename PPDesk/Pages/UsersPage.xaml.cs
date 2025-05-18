@@ -13,6 +13,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PPDesk.ViewModels;
+using CommunityToolkit.WinUI.UI.Controls;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,6 +32,13 @@ namespace PPDesk.Pages
             this.DataContext = userViewModel;
 
             UsersCountAsync();
+            LoadUsersAsync();
+        }
+
+        private async void LoadUsersAsync()
+        {
+            var userViewModel = (UserViewModel)DataContext;
+            await userViewModel.LoadUsersAsync();
         }
 
         private async void UsersCountAsync()
@@ -53,8 +62,37 @@ namespace PPDesk.Pages
         private async void FilterButton_Click(object sender, RoutedEventArgs e)
         {
             var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.FilterUsersAsync();
+            await userViewModel.LoadUsersAsync();
         }
 
+        private async void DataGrid_Sorting(object sender, DataGridColumnEventArgs e)
+        {
+            var userViewModel = (UserViewModel)DataContext;
+            string propertyName = e.Column.Tag?.ToString();
+
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                bool isAscending = e.Column.SortDirection != DataGridSortDirection.Ascending;
+                e.Column.SortDirection = isAscending ? DataGridSortDirection.Ascending : DataGridSortDirection.Descending;
+
+                foreach (var column in ((DataGrid)sender).Columns)
+                {
+                    if (column != e.Column)
+                    {
+                        column.SortDirection = null;
+                    }
+                }
+
+                await userViewModel.DataSortAsync(propertyName, isAscending);
+            }
+        }
+
+        private void OnPageKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                LoadUsersAsync();
+            }
+        }
     }
 }
