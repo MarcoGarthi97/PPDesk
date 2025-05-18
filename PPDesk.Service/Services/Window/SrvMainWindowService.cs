@@ -32,7 +32,12 @@ namespace PPDesk.Service.Services.Window
         {
             try
             {
-                var users = await _userService.GetUsersAsync(0);
+                await _eOrganizationService.LoadOrganizationsAsync();
+
+                var orders = await _eOrderService.GetListOrdersByOrganizationIdAsync();
+                
+                var users = _userService.GetUsersByEOrders(orders);
+                await _userService.InsertUsersAsync(users);
             }
             catch(Exception ex)
             {

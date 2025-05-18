@@ -32,6 +32,8 @@ using PPDesk.Service.Storages.Eventbride;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using Z.Dapper.Plus;
+using PPDesk.Pages;
+using PPDesk.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -77,7 +79,7 @@ namespace PPDesk
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             var mainWindowService = _host.Services.GetRequiredService<ISrvMainWindowService>();
-            m_window = new MainWindow(mainWindowService);
+            m_window = new MainWindow(mainWindowService, _host.Services);
             m_window.Activate();
         }
 
@@ -93,6 +95,8 @@ namespace PPDesk
             var connectionString = $"Data Source={dbPath}";
             services.AddSingleton<IDatabaseConnectionFactory>(provider =>
                 new MdlSqliteConnectionFactory(connectionString));
+            services.AddTransient<UsersPage>();
+            services.AddTransient<UserViewModel>();
 
             LoadConfigurations(config);
         }

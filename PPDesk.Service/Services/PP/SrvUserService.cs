@@ -14,9 +14,11 @@ namespace PPDesk.Service.Services.PP
 {
     public interface ISrvUserService : IForServiceCollectionExtension
     {
+        Task<int> CountUsersAsync();
         Task CreateTableUsersAsync();
         Task DeleteAllUsers();
-        Task<IEnumerable<SrvUser>> GetUsersAsync(int page, int limit = 50);
+        Task<IEnumerable<SrvUser>> GetAllUsersAsync();
+        Task<IEnumerable<SrvUser>> GetUsersAsync(string name, string phone, string email, int page, int limit = 50);
         IEnumerable<SrvUser> GetUsersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertUsersAsync(IEnumerable<SrvUser> srvUsers);
     }
@@ -45,10 +47,21 @@ namespace PPDesk.Service.Services.PP
             return users.DistinctBy(x => x.Name);
         }
 
-        public async Task<IEnumerable<SrvUser>> GetUsersAsync(int page, int limit = 50)
+        public async Task<IEnumerable<SrvUser>> GetUsersAsync(string name, string phone, string email, int page, int limit = 50)
         {
-            var mdlUsers = await _userRepository.GetUsersAsync(page, limit);
+            var mdlUsers = await _userRepository.GetUsersAsync(name, phone, email, page, limit);
             return _mapper.Map<IEnumerable<SrvUser>>(mdlUsers);
+        }
+
+        public async Task<IEnumerable<SrvUser>> GetAllUsersAsync()
+        {
+            var mdlUsers = await _userRepository.GetAllUsersAsync();
+            return _mapper.Map<IEnumerable<SrvUser>>(mdlUsers);
+        }
+
+        public async Task<int> CountUsersAsync()
+        {
+            return await _userRepository.CountUsersAsync();
         }
 
         public async Task InsertUsersAsync(IEnumerable<SrvUser> srvUsers)
