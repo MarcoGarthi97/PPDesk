@@ -4,6 +4,7 @@ using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Storages.Eventbride;
+using PPDesk.Service.Storages.PP;
 using RestSharp;
 using System;
 using System.Collections.Generic;

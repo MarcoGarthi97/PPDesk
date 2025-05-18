@@ -16,6 +16,10 @@ namespace PPDesk.ViewModels
         private readonly ISrvUserService _userService;
         private IEnumerable<SrvUser> _usersList = new List<SrvUser>();
 
+
+        public string? FullNameFilter { get; set; }
+        public string? PhoneFilter { get; set; }
+        public string? EmailFilter { get; set; }
         public ObservableCollection<SrvUser> Users { get; }= new ObservableCollection<SrvUser>();
         public IAsyncRelayCommand LoadUsersCommand { get; }
         public int _page = 0;
@@ -29,7 +33,7 @@ namespace PPDesk.ViewModels
 
         private async Task LoadUsersAsync()
         {
-            await FilterUsersAsync("", "", "");
+            await FilterUsersAsync();
         }
 
         private void BindGrid(IEnumerable<SrvUser> usersTemp)
@@ -42,7 +46,7 @@ namespace PPDesk.ViewModels
             }
         }
 
-        public async Task FilterUsersAsync(string name, string phone, string email)
+        public async Task FilterUsersAsync()
         {
             IEnumerable<SrvUser> usersTemp = new List<SrvUser>();
 
@@ -53,16 +57,28 @@ namespace PPDesk.ViewModels
                     _usersList = await _userService.GetAllUsersAsync();
                 }
 
-                usersTemp = _usersList.Where(x => x.Name.Contains(name)).ToList();
+                var predicate = CreatePredicate();
+                usersTemp = _usersList.Where(predicate).ToList();
+                _count = usersTemp.Count();
 
                 usersTemp = usersTemp.Take(50);
             }
             else
             {
-                usersTemp = await _userService.GetUsersAsync(name, phone, email, _page);
+                usersTemp = await _userService.GetUsersAsync(FullNameFilter, PhoneFilter, EmailFilter, _page);
             }
 
             BindGrid(usersTemp);
+        }
+
+        private Func<SrvUser, bool> CreatePredicate()
+        {
+            return user => (string.IsNullOrWhiteSpace(FullNameFilter) ||
+                             user.Name != null && user.Name.ToLower().Contains(FullNameFilter.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+                            (string.IsNullOrWhiteSpace(PhoneFilter) ||
+                             user.CellPhone != null && user.CellPhone.ToLower().Contains(PhoneFilter.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+                            (string.IsNullOrWhiteSpace(EmailFilter) ||
+                             user.Email != null && user.Email.ToLower().Contains(EmailFilter.ToLower(), StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<int> UsersCountAsync()

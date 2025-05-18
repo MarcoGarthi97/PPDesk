@@ -24,10 +24,6 @@ namespace PPDesk.Pages
     /// </summary>
     public sealed partial class UsersPage : Page
     {
-        public string FullNameFilter { get; set; }
-        public string PhoneFilter { get; set; }
-        public string EmailFilter { get; set; }
-
         public UsersPage(UserViewModel userViewModel)
         {
             this.InitializeComponent();
@@ -57,7 +53,8 @@ namespace PPDesk.Pages
         private async void FilterButton_Click(object sender, RoutedEventArgs e)
         {
             var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.FilterUsersAsync(FullNameFilter, PhoneFilter, EmailFilter);
+            await userViewModel.FilterUsersAsync();
         }
+
     }
 }
