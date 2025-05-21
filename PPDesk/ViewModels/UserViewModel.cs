@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PPDesk.Abstraction.DTO.Service.PP.User;
+using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.PP;
 
 namespace PPDesk.ViewModels
 {
-    public class UserViewModel : ObservableObject
+    public class UserViewModel : ObservableObject, IForServiceCollectionExtension
     {
         private readonly ISrvUserService _userService;
         private IEnumerable<SrvInformationUser> _usersList = new List<SrvInformationUser>();

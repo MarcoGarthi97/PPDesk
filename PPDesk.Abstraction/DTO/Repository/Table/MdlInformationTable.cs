@@ -3,26 +3,23 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PPDesk.Abstraction.DTO.Repository
+namespace PPDesk.Abstraction.DTO.Repository.Table
 {
     [Table("Tables")]
-    public class MdlTable
+    public class MdlInformationTable
     {
         [Key]
         [Column("Id")]
         public int Id { get; set; }
 
-        [Column("EventIdEventbride")]
-        public long EventIdEventbride { get; set; }
+        [Column("EventName")]
+        public string EventName { get; set; }
 
-        [Column("IdEventbride")]
-        public long IdEventbride { get; set; }
+        [Column("EventStatus")]
+        public EnumEventStatus EventStatus { get; set; }
 
         [Column("GdrName")]
         public string GdrName { get; set; }
-
-        [Column("Description")]
-        public string Description { get; set; }
 
         [Column("Capacity")]
         public short Capacity { get; set; }
@@ -39,11 +36,7 @@ namespace PPDesk.Abstraction.DTO.Repository
         [Column("Master")]
         public string Master { get; set; }
 
-        [Column("Status")]
-        public EnumTableStatus Status { get; set; }
-
         [Column("Type")]
-        public EnumTableType Type { get; set; }
-
+        public EnumTableType TableType { get; set; }
     }
 }

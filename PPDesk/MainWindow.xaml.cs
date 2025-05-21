@@ -40,6 +40,9 @@ namespace PPDesk
             this.InitializeComponent();
             _service = service;
             _serviceProvider = serviceProvider;
+
+            var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
+            ContentFrame.Content = tablesPage;
         }
 
 
@@ -57,8 +60,9 @@ namespace PPDesk
             {
                 switch (tag)
                 {
-                    case "homePage":
-                        ContentFrame.Navigate(typeof(MainWindow));
+                    case "tablesPage":
+                        var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
+                        ContentFrame.Content = tablesPage;
                         break;
                     case "usersPage":
                         var usersPage = _serviceProvider.GetRequiredService<UsersPage>();

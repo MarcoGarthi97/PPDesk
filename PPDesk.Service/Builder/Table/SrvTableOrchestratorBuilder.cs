@@ -1,5 +1,5 @@
 ﻿using PPDesk.Abstraction.DTO.Service.Eventbrite;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Builder.Table.Version;

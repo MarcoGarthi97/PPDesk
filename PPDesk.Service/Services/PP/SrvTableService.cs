@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using Microsoft.UI.Xaml.Controls;
+using PPDesk.Abstraction.DTO.Repository.Table;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
+using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using PPDesk.Service.Builder;
@@ -10,6 +12,7 @@ using PPDesk.Service.Services.Eventbrite;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,6 +26,10 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvTable>> GetAllTablesAsync();
         IEnumerable<SrvTable> GetTablesByETicketClasses(IEnumerable<SrvETicketClass> ticketClasses);
         Task InsertTablesAsync(IEnumerable<SrvTable> srvTables);
+        Task<int> CountAllInformationTablesAsync();
+        Task<int> CountInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType);
+        Task<IEnumerable<SrvInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit = 50);
+        Task<IEnumerable<SrvInformationTable>> GetAllInformationTablesAsync();
     }
 
     public class SrvTableService : ISrvTableService
@@ -84,6 +91,28 @@ namespace PPDesk.Service.Services.PP
         public async Task DeleteAllTablesAsync()
         {
             await _tableRepository.DeleteAllTablesAsync();
+        }
+
+        public async Task<int> CountAllInformationTablesAsync()
+        {
+            return await _tableRepository.CountAllInformationTablesAsync();
+        }
+
+        public async Task<int> CountInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType)
+        {
+            return await _tableRepository.CountInformationTablesAsync(eventName, gdrName, master, eventStatus, tableType);
+        }
+
+        public async Task<IEnumerable<SrvInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit = 50)
+        {
+            var mdlInformationsTable = await _tableRepository.GetInformationTablesAsync(eventName, gdrName, master, eventStatus, tableType, page, limit);
+            return _mapper.Map<IEnumerable<SrvInformationTable>>(mdlInformationsTable);
+        }
+
+        public async Task<IEnumerable<SrvInformationTable>> GetAllInformationTablesAsync()
+        {
+            var mdlInformationsTable = await _tableRepository.GetAllInformationTablesAsync();
+            return _mapper.Map<IEnumerable<SrvInformationTable>>(mdlInformationsTable);
         }
     }
 }

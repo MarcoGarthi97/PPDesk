@@ -1,7 +1,7 @@
 ﻿using PPDesk.Abstraction.Enum;
 using System;
 
-namespace PPDesk.Abstraction.DTO.Service.PP
+namespace PPDesk.Abstraction.DTO.Service.PP.Table
 {
     public class SrvTable
     {
