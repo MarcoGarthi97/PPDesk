@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.PP;
 
@@ -15,7 +15,7 @@ namespace PPDesk.ViewModels
     public class UserViewModel : ObservableObject
     {
         private readonly ISrvUserService _userService;
-        private IEnumerable<SrvUser> _usersList = new List<SrvUser>();
+        private IEnumerable<SrvInformationUser> _usersList = new List<SrvInformationUser>();
         private bool _loadFast;
         private string? _totalRecordsText;
         private string? _pageText;
@@ -33,7 +33,7 @@ namespace PPDesk.ViewModels
             get => _pageText;
             set => SetProperty(ref _pageText, value);
         }
-        public ObservableCollection<SrvUser> Users { get; }= new ObservableCollection<SrvUser>();
+        public ObservableCollection<SrvInformationUser> Users { get; }= new ObservableCollection<SrvInformationUser>();
         public IAsyncRelayCommand LoadUsersCommand { get; }
         public int _page = 0;
         public int _count = -1;
@@ -51,7 +51,7 @@ namespace PPDesk.ViewModels
             RecordsPagination(usersTemp);
         }
 
-        private void BindGrid(IEnumerable<SrvUser> usersTemp)
+        private void BindGrid(IEnumerable<SrvInformationUser> usersTemp)
         {
             Users.Clear();
 
@@ -61,15 +61,15 @@ namespace PPDesk.ViewModels
             }
         }
 
-        public async Task<IEnumerable<SrvUser>> FilterUsersAsync()
+        public async Task<IEnumerable<SrvInformationUser>> FilterUsersAsync()
         {
-            IEnumerable<SrvUser> usersTemp = new List<SrvUser>();
+            IEnumerable<SrvInformationUser> usersTemp = new List<SrvInformationUser>();
 
             if (_loadFast)
             {
                 if (!_usersList.Any())
                 {
-                    _usersList = await _userService.GetAllUsersAsync();
+                    _usersList = await _userService.GetAllInformationUsersAsync();
                 }
 
                 var predicate = CreatePredicate();
@@ -78,7 +78,7 @@ namespace PPDesk.ViewModels
             }
             else
             {
-                usersTemp = await _userService.GetUsersAsync(FullNameFilter, PhoneFilter, EmailFilter, _page);
+                usersTemp = await _userService.GetInformationUsersAsync(FullNameFilter, PhoneFilter, EmailFilter, _page);
                 _count = await _userService.CountUsersAsync(FullNameFilter, PhoneFilter, EmailFilter);
             }
 
@@ -88,7 +88,7 @@ namespace PPDesk.ViewModels
             return usersTemp;
         }
 
-        private Func<SrvUser, bool> CreatePredicate()
+        private Func<SrvInformationUser, bool> CreatePredicate()
         {
             return user => (string.IsNullOrWhiteSpace(FullNameFilter) ||
                              user.Name != null && user.Name.ToLower().Contains(FullNameFilter.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
@@ -156,6 +156,16 @@ namespace PPDesk.ViewModels
                         ? usersTemp.OrderBy(u => u.Email).ToList()
                         : usersTemp.OrderByDescending(u => u.Email).ToList();
                     break;
+                case "EventsQuantity":
+                    usersTemp = isAscending
+                        ? usersTemp.OrderBy(u => u.EventsQuantity).ToList()
+                        : usersTemp.OrderByDescending(u => u.EventsQuantity).ToList();
+                    break;
+                case "OrdersQuantity":
+                    usersTemp = isAscending
+                        ? usersTemp.OrderBy(u => u.OrdersQuantity).ToList()
+                        : usersTemp.OrderByDescending(u => u.OrdersQuantity).ToList();
+                    break;
                 default:
                     return;
             }
@@ -163,7 +173,7 @@ namespace PPDesk.ViewModels
             RecordsPagination(usersTemp);
         }
 
-        private void RecordsPagination(IEnumerable<SrvUser> usersTemp)
+        private void RecordsPagination(IEnumerable<SrvInformationUser> usersTemp)
         {
             int skip = _page * 50;
             usersTemp = usersTemp.Skip(skip).Take(50);

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 
 namespace PPDesk.Service.Mapper
 {
@@ -11,6 +11,7 @@ namespace PPDesk.Service.Mapper
         {
             CreateMap<SrvEProfile, SrvUser>();
             CreateMap<SrvUser, MdlUser>().ReverseMap();
+            CreateMap<SrvInformationUser, MdlInformationUser>().ReverseMap();
         }
     }
 }

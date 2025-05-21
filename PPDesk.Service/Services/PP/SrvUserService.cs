@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using System;
@@ -18,7 +18,9 @@ namespace PPDesk.Service.Services.PP
         Task<int> CountUsersAsync(string name, string phone, string email);
         Task CreateTableUsersAsync();
         Task DeleteAllUsers();
+        Task<IEnumerable<SrvInformationUser>> GetAllInformationUsersAsync();
         Task<IEnumerable<SrvUser>> GetAllUsersAsync();
+        Task<IEnumerable<SrvInformationUser>> GetInformationUsersAsync(string name, string phone, string email, int page, int limit = 50);
         Task<IEnumerable<SrvUser>> GetUsersAsync(string name, string phone, string email, int page, int limit = 50);
         IEnumerable<SrvUser> GetUsersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertUsersAsync(IEnumerable<SrvUser> srvUsers);
@@ -54,10 +56,22 @@ namespace PPDesk.Service.Services.PP
             return _mapper.Map<IEnumerable<SrvUser>>(mdlUsers);
         }
 
+        public async Task<IEnumerable<SrvInformationUser>> GetInformationUsersAsync(string name, string phone, string email, int page, int limit = 50)
+        {
+            var mdlInformationUsers = await _userRepository.GetInformationUsersAsync(name, phone, email, page, limit);
+            return _mapper.Map<IEnumerable<SrvInformationUser>>(mdlInformationUsers);
+        }
+
         public async Task<IEnumerable<SrvUser>> GetAllUsersAsync()
         {
             var mdlUsers = await _userRepository.GetAllUsersAsync();
             return _mapper.Map<IEnumerable<SrvUser>>(mdlUsers);
+        }
+
+        public async Task<IEnumerable<SrvInformationUser>> GetAllInformationUsersAsync()
+        {
+            var mdlInformationUsers = await _userRepository.GetAllInformationUsersAsync();
+            return _mapper.Map<IEnumerable<SrvInformationUser>>(mdlInformationUsers);
         }
 
         public async Task<int> CountUsersAsync()

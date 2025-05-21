@@ -68,6 +68,8 @@
                 <controls:DataGridTextColumn Header="Cognome" Tag="LastName" Binding="{Binding LastName}" />
                 <controls:DataGridTextColumn Header="Telefono" Tag="CellPhone" Binding="{Binding CellPhone}" />
                 <controls:DataGridTextColumn Header="Email" Tag="Email" Binding="{Binding Email}" />
+                <controls:DataGridTextColumn Header="Numero Eventi" Tag="EventsQuantity" Binding="{Binding EventsQuantity}" />
+                <controls:DataGridTextColumn Header="Numero Ordini" Tag="OrdersQuantity" Binding="{Binding OrdersQuantity}" />
             </controls:DataGrid.Columns>
         </controls:DataGrid>
 

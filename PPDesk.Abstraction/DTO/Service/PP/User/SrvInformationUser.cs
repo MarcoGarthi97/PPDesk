@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PPDesk.Abstraction.DTO.Service.PP
+﻿namespace PPDesk.Abstraction.DTO.Service.PP.User
 {
-    public class SrvUser
+    public class SrvInformationUser
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -14,5 +8,7 @@ namespace PPDesk.Abstraction.DTO.Service.PP
         public string CellPhone { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+        public int EventsQuantity { get; set; }
+        public int OrdersQuantity { get; set; }
     }
 }
