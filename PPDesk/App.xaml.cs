@@ -32,6 +32,10 @@ using PPDesk.Service.Storages.Eventbride;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using Z.Dapper.Plus;
+using PPDesk.Pages;
+using PPDesk.ViewModels;
+using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Service.Storages.PP;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -77,7 +81,7 @@ namespace PPDesk
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             var mainWindowService = _host.Services.GetRequiredService<ISrvMainWindowService>();
-            m_window = new MainWindow(mainWindowService);
+            m_window = new MainWindow(mainWindowService, _host.Services);
             m_window.Activate();
         }
 
@@ -93,6 +97,8 @@ namespace PPDesk
             var connectionString = $"Data Source={dbPath}";
             services.AddSingleton<IDatabaseConnectionFactory>(provider =>
                 new MdlSqliteConnectionFactory(connectionString));
+            services.AddTransient<UsersPage>();
+            services.AddTransient<UserViewModel>();
 
             LoadConfigurations(config);
         }
@@ -119,6 +125,9 @@ namespace PPDesk
             var apikey = config.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
             SrvEApiKeyStorage.SetpiKeyStorage(apikey);
             SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
+
+            var databaseConfiguration = config.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
+            SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
         }
 
         private Window? m_window;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PPDesk.Abstraction.DTO.Repository.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,5 @@ namespace PPDesk.Abstraction.Helper
 {
     public interface IForServiceCollectionExtension
     {
-
     }
 }

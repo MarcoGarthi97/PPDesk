@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PPDesk.Abstraction.DTO.Repository
+namespace PPDesk.Abstraction.DTO.Repository.User
 {
     [Table("USERS")]
     public class MdlUser

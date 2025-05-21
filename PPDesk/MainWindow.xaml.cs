@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -14,6 +15,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using PPDesk.Pages;
 using PPDesk.Service.Services.Eventbrite;
 using PPDesk.Service.Services.Window;
 using RestSharp;
@@ -31,10 +33,13 @@ namespace PPDesk
     public sealed partial class MainWindow : Window
     {
         private readonly ISrvMainWindowService _service;
-        public MainWindow(ISrvMainWindowService service)
+        private readonly IServiceProvider _serviceProvider;
+
+        public MainWindow(ISrvMainWindowService service, IServiceProvider serviceProvider)
         {
             this.InitializeComponent();
             _service = service;
+            _serviceProvider = serviceProvider;
         }
 
 
@@ -43,6 +48,24 @@ namespace PPDesk
             myButton.Content = "Clicked";
 
             await _service.Test();
+        }
+
+        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.InvokedItemContainer is NavigationViewItem item &&
+                item.Tag is string tag)
+            {
+                switch (tag)
+                {
+                    case "homePage":
+                        ContentFrame.Navigate(typeof(MainWindow));
+                        break;
+                    case "usersPage":
+                        var usersPage = _serviceProvider.GetRequiredService<UsersPage>();
+                        ContentFrame.Content = usersPage;
+                        break;
+                }
+            }
         }
     }
 }

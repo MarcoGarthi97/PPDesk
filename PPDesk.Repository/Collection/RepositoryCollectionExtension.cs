@@ -1,4 +1,5 @@
 ﻿using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.User;
 using Z.Dapper.Plus;
 
 namespace PPDesk.Repository.Collection

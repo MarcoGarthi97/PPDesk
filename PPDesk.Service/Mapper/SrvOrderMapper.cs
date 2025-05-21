@@ -16,6 +16,7 @@ namespace PPDesk.Service.Mapper
             CreateMap<SrvEAttendee, SrvOrder>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.IdEventbride, opt => opt.MapFrom(from => Convert.ToInt64(from.Id)))
+                .ForMember(dest => dest.EventIdEventbride, opt => opt.MapFrom(from => Convert.ToInt64(from.EventId)))
                 .ForMember(dest => dest.OrderIdEventbride, opt => opt.MapFrom(from => Convert.ToInt64(from.OrderId)))
                 .ForMember(dest => dest.TableIdEventbride, opt => opt.MapFrom(from => Convert.ToInt64(from.TicketClassId)))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(from => from.Profile.Name));
