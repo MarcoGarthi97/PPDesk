@@ -7,8 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:PPDesk.Helper.Converters"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    KeyDown="OnPageKeyDown">
+
+    <Page.Resources>
+        <converters:DateConverter x:Key="DateConverter"/>
+        <converters:EnumEventStatusConverter x:Key="EnumEventStatusConverter"/>
+    </Page.Resources>
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -45,6 +52,15 @@
                      PlaceholderText="Inserisci email"/>
             </StackPanel>-->
 
+            <ComboBox x:Name="BoundComboBox"
+Header="Selezione evento"
+PlaceholderText="Seleziona evento..."
+ItemsSource="{Binding ListEvents}"
+SelectedItem="{Binding SelectedEvent, Mode=TwoWay}"
+DisplayMemberPath="Name"
+SelectedValuePath="Id"
+Width="200"/>
+
             <Button Grid.Column="3" Content="Applica" 
                 Click="FilterButton_Click"
                 Margin="5,25,5,0"/>
@@ -57,13 +73,13 @@
         Sorting="DataGrid_Sorting">
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="Name evento" Tag="EventName" Binding="{Binding EventName}" />
-                <controls:DataGridTextColumn Header="Stato evento" Tag="EventStatus" Binding="{Binding EventStatus}" />
+                <controls:DataGridTextColumn Header="Stato evento" Tag="EventStatus" Binding="{Binding EventStatus, Converter={StaticResource EnumEventStatusConverter}}" />
                 <controls:DataGridTextColumn Header="Name GDR" Tag="GdrName" Binding="{Binding GdrName}" />
                 <controls:DataGridTextColumn Header="Master" Tag="Master" Binding="{Binding Master}" />
                 <controls:DataGridTextColumn Header="Capacità" Tag="Capacity" Binding="{Binding Capacity}" />
                 <controls:DataGridTextColumn Header="Posti prenotati" Tag="QuantitySold" Binding="{Binding QuantitySold}" />
-                <controls:DataGridTextColumn Header="Data inizio" Tag="StartDate" Binding="{Binding StartDate}" />
-                <controls:DataGridTextColumn Header="Data fine" Tag="EndDate" Binding="{Binding EndDate}" />
+                <controls:DataGridTextColumn Header="Data inizio" Tag="StartDate" Binding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
+                <controls:DataGridTextColumn Header="Data fine" Tag="EndDate" Binding="{Binding EndDate, Converter={StaticResource DateConverter}}" />
                 <controls:DataGridTextColumn Header="Tipologia" Tag="TableType" Binding="{Binding TableType}" />
 
             </controls:DataGrid.Columns>

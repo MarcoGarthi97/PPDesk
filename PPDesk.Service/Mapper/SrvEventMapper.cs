@@ -3,6 +3,7 @@ using PPDesk.Abstraction.DTO.Repository;
 using PPDesk.Abstraction.DTO.Response.Eventbride.Event;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Service.Helper;
 using System;
@@ -27,6 +28,8 @@ namespace PPDesk.Service.Mapper
                 .ForMember(dest => dest.OrganizationId, opt => opt.MapFrom(from => Convert.ToInt64(from.OrganizationId)));
 
             CreateMap<SrvEvent, MdlEvent>().ReverseMap();
+
+            CreateMap<SrvEvent, ComboBoxEventUI>();
         }
     }
 }

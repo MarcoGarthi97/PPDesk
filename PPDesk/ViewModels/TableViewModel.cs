@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PPDesk.Abstraction.DTO.Service.PP.Table;
-using PPDesk.Abstraction.DTO.Service.PP.Table;
-using PPDesk.Abstraction.DTO.Service.PP.Table;
+using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Services.PP;
@@ -21,11 +20,21 @@ namespace PPDesk.ViewModels
     public class TableViewModel : ObservableObject, IForServiceCollectionExtension
     {
         private readonly ISrvTableService _tableService;
+        private readonly ISrvEventService _eventService;
         private IEnumerable<SrvInformationTable> _tablesList = new List<SrvInformationTable>();
         private bool _loadFast;
         private string? _totalRecordsText;
         private string? _pageText;
-
+        private ComboBoxEventUI? _selectedEvent;
+        public ComboBoxEventUI? SelectedEvent
+        {
+            get => _selectedEvent;
+            set
+            {
+                SetProperty(ref _selectedEvent, value);
+                EventName = value?.Name;
+            }
+        }
         public string? EventName;
         public string? GdrName;
         public string? Master;
@@ -42,15 +51,19 @@ namespace PPDesk.ViewModels
             set => SetProperty(ref _pageText, value);
         }
         public ObservableCollection<SrvInformationTable> Tables { get; } = new ObservableCollection<SrvInformationTable>();
+        public ObservableCollection<ComboBoxEventUI> ListEvents { get; } = new ObservableCollection<ComboBoxEventUI>();
         public IAsyncRelayCommand LoadTablesCommand { get; }
         public int _page = 0;
         public int _count = -1;
 
-        public TableViewModel(ISrvTableService tableService)
+        public TableViewModel(ISrvTableService tableService, ISrvEventService eventService)
         {
             _tableService = tableService;
             LoadTablesCommand = new AsyncRelayCommand(LoadTablesAsync);
             _loadFast = SrvAppConfigurationStorage.DatabaseConfiguration.LoadFast;
+            _eventService = eventService;
+
+            InitializeComboBoxesAsync().Wait();
         }
 
         public async Task LoadTablesAsync()
@@ -66,6 +79,22 @@ namespace PPDesk.ViewModels
             foreach (var x in tablesTemp)
             {
                 Tables.Add(x);
+            }
+        }
+
+        private async Task InitializeComboBoxesAsync()
+        {
+            await InitializeComboBoxEventsAsync();
+        }
+
+        private async Task InitializeComboBoxEventsAsync()
+        {
+            var events = await _eventService.GetComboBoxEventsUI();
+            
+            ListEvents.Clear();
+            foreach (var e in events)
+            {
+                ListEvents.Add(e);
             }
         }
 
