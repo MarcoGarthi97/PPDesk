@@ -46,7 +46,8 @@
             SelectedItem="{Binding SelectedEvent, Mode=TwoWay}"
             DisplayMemberPath="Name"
             SelectedValuePath="Id"
-            HorizontalAlignment="Stretch" />
+            HorizontalAlignment="Stretch"
+    KeyDown="OnPageKeyDown" />
             </StackPanel>
 
             <!-- ComboBox Status Event -->
@@ -59,7 +60,8 @@
             SelectedItem="{Binding SelectedStatusEvent, Mode=TwoWay}"
             DisplayMemberPath="Name"
             SelectedValuePath="Id"
-            HorizontalAlignment="Stretch" />
+            HorizontalAlignment="Stretch"
+    KeyDown="OnPageKeyDown" />
             </StackPanel>
 
             <!-- ComboBox Type Table -->
@@ -72,14 +74,15 @@
             SelectedItem="{Binding SelectedTypeStable, Mode=TwoWay}"
             DisplayMemberPath="Name"
             SelectedValuePath="Id"
-            HorizontalAlignment="Stretch" />
+            HorizontalAlignment="Stretch"
+    KeyDown="OnPageKeyDown" />
             </StackPanel>
 
             <!-- TextBox Nome Gdr -->
             <StackPanel Grid.Column="3" Margin="0,0,10,0">
                 <TextBox Text="{Binding GdrName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                  Header="Nome Gdr"
-                 PlaceholderText="Inserisci Nome Gdr"
+                 PlaceholderText="Inserisci nome gdr"
                  HorizontalAlignment="Stretch" />
             </StackPanel>
 
@@ -87,7 +90,7 @@
             <StackPanel Grid.Column="4" Margin="0,0,10,0">
                 <TextBox Text="{Binding Master, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                  Header="Nome Master"
-                 PlaceholderText="Inserisci Nome Master"
+                 PlaceholderText="Inserisci nome master"
                  HorizontalAlignment="Stretch" />
             </StackPanel>
 
