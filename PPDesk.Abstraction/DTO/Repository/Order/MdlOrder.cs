@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PPDesk.Abstraction.DTO.Repository
+namespace PPDesk.Abstraction.DTO.Repository.Order
 {
     [Table("ORDES")]
     public class MdlOrder

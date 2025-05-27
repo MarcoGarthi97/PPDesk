@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.Order;
 using PPDesk.Abstraction.DTO.Response.Eventbride.Order;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Order;
 using System;
 
 namespace PPDesk.Service.Mapper
