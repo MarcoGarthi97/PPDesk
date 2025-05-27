@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using PPDesk.Abstraction.DTO.Repository;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace PPDesk.Service.Services.PP
     {
         Task CreateTableEventsAsync();
         Task DeleteAllEvents();
+        Task<IEnumerable<ComboBoxEventUI>> GetComboBoxEventsUI();
         Task<IEnumerable<SrvEvent>> GetEventsAsync(int page, int limit = 50);
         IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents);
         Task InsertEventsAsync(IEnumerable<SrvEvent> srvEvents);
@@ -41,6 +43,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlEvents = await _eventRepository.GetEventsAsync(page, limit);
             return _mapper.Map<IEnumerable<SrvEvent>>(mdlEvents);
+        }
+
+        public async Task<IEnumerable<ComboBoxEventUI>> GetComboBoxEventsUI()
+        {
+            var events = await GetEventsAsync(0);
+            return _mapper.Map<IEnumerable<ComboBoxEventUI>>(events);
         }
 
         public IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents)

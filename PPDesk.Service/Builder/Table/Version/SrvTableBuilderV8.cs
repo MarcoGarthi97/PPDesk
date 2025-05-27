@@ -1,5 +1,5 @@
 ﻿using PPDesk.Abstraction.DTO.Service.Eventbrite;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using System;
@@ -28,7 +28,7 @@ namespace PPDesk.Service.Builder.Table.Version
             string forDate = builder.Type == EnumTableType.Multitavolo ? eTicketClass.Name : eTicketClass.Description;
             forDate = eTicketClass.Id == "2402123933" ? "Orario: ORE 15.00" : forDate;
 
-            string forName = builder.Type == EnumTableType.Multitavolo ? eTicketClass.Description : eTicketClass.Description;
+            string forName = builder.Type == EnumTableType.Multitavolo ? eTicketClass.Description : eTicketClass.Name;
 
             builder.GdrName = GdrNameBuilder(forName, builder.Type);
             builder.Description = DescriptionBuilder(eTicketClass.Description);

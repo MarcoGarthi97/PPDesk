@@ -79,18 +79,21 @@ namespace PPDesk.Repository.Repositories
                         SELECT Name, SUM(Quantity) AS OrdersQuantity
                         FROM ORDERS
                         GROUP BY Name
-                    ) o ON o.Name = u.Name;";
+                    ) o ON o.Name = u.Name WHERE 1 = 1";
 
             sql += WhereUsers(name, phone, email);
 
-            sql += "ORDER BY Name ASC " +
+            sql += "ORDER BY u.Name ASC " +
                 "LIMIT @limit OFFSET @offset;";
 
             var connection = await _connectionFactory.CreateConnectionAsync();
             return await connection.QueryAsync<MdlInformationUser>(sql, new
             {
                 limit,
-                offset
+                offset,
+                name,
+                phone,
+                email
             });
         }
 

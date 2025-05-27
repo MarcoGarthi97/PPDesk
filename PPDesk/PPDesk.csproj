@@ -13,6 +13,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Pages\TablesPage.xaml" />
     <None Remove="Pages\UsersPage.xaml" />
     <None Remove="UsersPage.xaml" />
   </ItemGroup>
@@ -57,7 +58,9 @@
     <ProjectReference Include="..\PPDesk.Service\PPDesk.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helper\" />
+    <Page Update="Pages\TablesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\UsersPage.xaml">

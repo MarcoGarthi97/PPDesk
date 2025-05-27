@@ -18,13 +18,9 @@
     ItemInvoked="NavView_ItemInvoked">
 
         <muxc:NavigationView.MenuItems>
-            <muxc:NavigationViewItem Content="Home"   Icon="Home"    Tag="homePage"/>
-            <muxc:NavigationViewItem Content="Tavoli" Icon="List" Tag="tavoliPage"/>
-            <!-- nuova voce -->
+            <muxc:NavigationViewItem Content="Tavoli" Icon="List" Tag="tablesPage"/>
             <muxc:NavigationViewItem Content="Ordini" Icon="List"     Tag="ordiniPage"/>
-            <!-- nuova voce -->
             <muxc:NavigationViewItem Content="Utenti" Icon="Contact"  Tag="usersPage"/>
-            <!-- nuova voce -->
             <muxc:NavigationViewItem Content="Info"   Icon="Help"     Tag="aboutPage"/>
         </muxc:NavigationView.MenuItems>
 

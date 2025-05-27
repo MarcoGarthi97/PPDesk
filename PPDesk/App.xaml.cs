@@ -36,6 +36,7 @@ using PPDesk.Pages;
 using PPDesk.ViewModels;
 using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Service.Storages.PP;
+using PPDesk.Helper.Collection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -90,6 +91,7 @@ namespace PPDesk
             services.AddAutoMapper(typeof(App).Assembly,
                           typeof(SrvVersionService).Assembly);
 
+            services.AddSharedLibrary();
             services.AddSharedLibraryServices();
             services.AddSharedLibraryRepositories();
 
@@ -97,8 +99,6 @@ namespace PPDesk
             var connectionString = $"Data Source={dbPath}";
             services.AddSingleton<IDatabaseConnectionFactory>(provider =>
                 new MdlSqliteConnectionFactory(connectionString));
-            services.AddTransient<UsersPage>();
-            services.AddTransient<UserViewModel>();
 
             LoadConfigurations(config);
         }

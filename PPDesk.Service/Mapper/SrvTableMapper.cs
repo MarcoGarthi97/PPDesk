@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.Table;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 
 namespace PPDesk.Service.Mapper
 {
@@ -10,6 +10,7 @@ namespace PPDesk.Service.Mapper
         public SrvTableMapper()
         {
             CreateMap<SrvTable, MdlTable>().ReverseMap();
+            CreateMap<SrvInformationTable, MdlInformationTable>().ReverseMap();
 
             CreateMap<SrvETicketClass, SrvTable>()
                 .ForMember(dest => dest.IdEventbride, opt => opt.MapFrom(from => from.Id))
