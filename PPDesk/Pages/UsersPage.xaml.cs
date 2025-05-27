@@ -16,6 +16,7 @@ using PPDesk.ViewModels;
 using CommunityToolkit.WinUI.UI.Controls;
 using Windows.System;
 using PPDesk.Abstraction.Helper;
+using Microsoft.Extensions.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,73 +27,125 @@ namespace PPDesk.Pages
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class UsersPage : Page, IForServiceCollectionExtension
-    {
-        public UsersPage(UserViewModel userViewModel)
+   {
+
+        private readonly ILogger<UsersPage> _logger;
+        public UsersPage(UserViewModel userViewModel, ILogger<UsersPage> logger)
         {
             this.InitializeComponent();
             this.DataContext = userViewModel;
 
             UsersCountAsync();
             LoadUsersAsync();
+            _logger = logger;
         }
 
         private async void LoadUsersAsync()
         {
-            var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.LoadUsersAsync();
+            try
+            {
+                var userViewModel = (UserViewModel)DataContext;
+                await userViewModel.LoadUsersAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void UsersCountAsync()
         {
-            var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.UsersCountAsync();
+            try
+            {
+                var userViewModel = (UserViewModel)DataContext;
+                await userViewModel.UsersCountAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.PrevButton();
+            try
+            {
+                var userViewModel = (UserViewModel)DataContext;
+                await userViewModel.PrevButton();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.NextButton();
+            try
+            {
+                var userViewModel = (UserViewModel)DataContext;
+                await userViewModel.NextButton();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void FilterButton_Click(object sender, RoutedEventArgs e)
         {
-            var userViewModel = (UserViewModel)DataContext;
-            await userViewModel.LoadUsersAsync();
+            try
+            {
+                var userViewModel = (UserViewModel)DataContext;
+                await userViewModel.LoadUsersAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void DataGrid_Sorting(object sender, DataGridColumnEventArgs e)
         {
-            var userViewModel = (UserViewModel)DataContext;
-            string propertyName = e.Column.Tag?.ToString();
-
-            if (!string.IsNullOrEmpty(propertyName))
+            try
             {
-                bool isAscending = e.Column.SortDirection != DataGridSortDirection.Ascending;
-                e.Column.SortDirection = isAscending ? DataGridSortDirection.Ascending : DataGridSortDirection.Descending;
+                var userViewModel = (UserViewModel)DataContext;
+                string propertyName = e.Column.Tag?.ToString();
 
-                foreach (var column in ((DataGrid)sender).Columns)
+                if (!string.IsNullOrEmpty(propertyName))
                 {
-                    if (column != e.Column)
-                    {
-                        column.SortDirection = null;
-                    }
-                }
+                    bool isAscending = e.Column.SortDirection != DataGridSortDirection.Ascending;
+                    e.Column.SortDirection = isAscending ? DataGridSortDirection.Ascending : DataGridSortDirection.Descending;
 
-                await userViewModel.DataSortAsync(propertyName, isAscending);
+                    foreach (var column in ((DataGrid)sender).Columns)
+                    {
+                        if (column != e.Column)
+                        {
+                            column.SortDirection = null;
+                        }
+                    }
+
+                    await userViewModel.DataSortAsync(propertyName, isAscending);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
         }
 
         private void OnPageKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            try
             {
-                LoadUsersAsync();
+                if (e.Key == VirtualKey.Enter)
+                {
+                    LoadUsersAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
         }
     }

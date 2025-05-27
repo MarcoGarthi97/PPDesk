@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -27,72 +28,139 @@ namespace PPDesk.Pages
     /// </summary>
     public sealed partial class TablesPage : Page, IForServiceCollectionExtension
     {
-        public TablesPage(TableViewModel tableViewModel)
+        private readonly ILogger<TablesPage> _logger;
+
+        public TablesPage(TableViewModel tableViewModel, ILogger<TablesPage> logger)
         {
             this.InitializeComponent();
             this.DataContext = tableViewModel;
 
             TablesCountAsync();
             LoadTablesAsync();
+            _logger = logger;
         }
 
         private async void LoadTablesAsync()
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            await tableViewModel.LoadTablesAsync();
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.LoadTablesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void TablesCountAsync()
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            await tableViewModel.TablesCountAsync();
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.TablesCountAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            await tableViewModel.PrevButton();
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.PrevButton();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            await tableViewModel.NextButton();
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.NextButton();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void FilterButton_Click(object sender, RoutedEventArgs e)
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            await tableViewModel.LoadTablesAsync();
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.LoadTablesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void DataGrid_Sorting(object sender, DataGridColumnEventArgs e)
         {
-            var tableViewModel = (TableViewModel)DataContext;
-            string propertyName = e.Column.Tag?.ToString();
-
-            if (!string.IsNullOrEmpty(propertyName))
+            try
             {
-                bool isAscending = e.Column.SortDirection != DataGridSortDirection.Ascending;
-                e.Column.SortDirection = isAscending ? DataGridSortDirection.Ascending : DataGridSortDirection.Descending;
+                var tableViewModel = (TableViewModel)DataContext;
+                string propertyName = e.Column.Tag?.ToString();
 
-                foreach (var column in ((DataGrid)sender).Columns)
+                if (!string.IsNullOrEmpty(propertyName))
                 {
-                    if (column != e.Column)
-                    {
-                        column.SortDirection = null;
-                    }
-                }
+                    bool isAscending = e.Column.SortDirection != DataGridSortDirection.Ascending;
+                    e.Column.SortDirection = isAscending ? DataGridSortDirection.Ascending : DataGridSortDirection.Descending;
 
-                await tableViewModel.DataSortAsync(propertyName, isAscending);
+                    foreach (var column in ((DataGrid)sender).Columns)
+                    {
+                        if (column != e.Column)
+                        {
+                            column.SortDirection = null;
+                        }
+                    }
+
+                    await tableViewModel.DataSortAsync(propertyName, isAscending);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
         }
 
         private void OnPageKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            try
             {
-                LoadTablesAsync();
+                if (e.Key == VirtualKey.Enter)
+                {
+                    LoadTablesAsync();
+                }
+                else if (e.Key == VirtualKey.Back && sender is ComboBox comboBox)
+                {
+                    if (((ComboBox)sender).Name == "ComboBoxEvent")
+                    {
+                        ComboBoxEvent.SelectedItem = null;
+                    }
+                    else if (((ComboBox)sender).Name == "ComboBoxStatusEvent")
+                    {
+                        ComboBoxStatusEvent.SelectedItem = null;
+                    }
+                    else if (((ComboBox)sender).Name == "ComboBoxTypeTable")
+                    {
+                        ComboBoxTypeTable.SelectedItem = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
         }
     }

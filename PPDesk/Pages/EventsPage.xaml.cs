@@ -88,7 +88,7 @@ namespace PPDesk.Pages
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, ex.Message);
             }
         }
 

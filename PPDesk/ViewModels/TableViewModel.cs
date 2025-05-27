@@ -46,7 +46,7 @@ namespace PPDesk.ViewModels
             set
             {
                 SetProperty(ref _selectedStatusEvent, value);
-                EventStatus = (EnumEventStatus)value?.Id!;
+                EventStatus = value == null ? null : (EnumEventStatus)value?.Id!;
             }
         }
 
@@ -56,7 +56,7 @@ namespace PPDesk.ViewModels
             set
             {
                 SetProperty(ref _selectedTypeTable, value);
-                TableType = (EnumTableType)value?.Id!;
+                TableType = value == null ? null : (EnumTableType)value?.Id!;
             }
         }
 
