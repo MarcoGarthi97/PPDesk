@@ -3,10 +3,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PPDesk.Abstraction.DTO.Repository
+namespace PPDesk.Abstraction.DTO.Repository.Event
 {
     [Table("EVENTS")]
-    public class MdlEvent
+    public class MdlInformationEvent
     {
         [Key]
         [Column("Id")]
@@ -15,17 +15,15 @@ namespace PPDesk.Abstraction.DTO.Repository
         public long IdEventbride { get; set; }
         [Column("Name")]
         public string Name { get; set; }
-        [Column("Description")]
-        public string Description { get; set; }
         [Column("Start")]
         public DateTime Start { get; set; }
         [Column("End")]
         public DateTime End { get; set; }
-        [Column("OrganizationId")]
-        public long OrganizationId { get; set; }
-        [Column("Created")]
-        public DateTime Created { get; set; }
         [Column("Status")]
         public EnumEventStatus Status { get; set; }
+        [Column("TotalUsers")]
+        public int TotalUsers { get; set; }
+        [Column("TotalTicket")]
+        public int TotalTicket { get; set; }
     }
 }

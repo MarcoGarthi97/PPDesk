@@ -2,7 +2,7 @@
 using PPDesk.Abstraction.Enum;
 using System;
 
-namespace PPDesk.Abstraction.DTO.Service.PP
+namespace PPDesk.Abstraction.DTO.Service.PP.Event
 {
     public class SrvEvent
     {

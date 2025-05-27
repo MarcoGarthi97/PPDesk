@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.Event;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Event;
 using PPDesk.Abstraction.DTO.UI;
+using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using System.Collections.Generic;
@@ -14,11 +15,15 @@ namespace PPDesk.Service.Services.PP
 {
     public interface ISrvEventService : IForServiceCollectionExtension
     {
+        Task<int> CountAllInformationEventsAsync();
+        Task<int> CountInformationEventsAsync(string name, EnumEventStatus? status);
         Task CreateTableEventsAsync();
         Task DeleteAllEvents();
+        Task<IEnumerable<SrvInformationEvent>> GetAllInformationEventsAsync();
         Task<IEnumerable<ComboBoxEventUI>> GetComboBoxEventsUI();
         Task<IEnumerable<SrvEvent>> GetEventsAsync(int page, int limit = 50);
         IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents);
+        Task<IEnumerable<SrvInformationEvent>> GetInformationEventsAsync(string name, EnumEventStatus? status, int page, int limit = 50);
         Task InsertEventsAsync(IEnumerable<SrvEvent> srvEvents);
         Task UpdateEventsAsync(IEnumerable<SrvEvent> srvEvents);
     }
@@ -54,6 +59,28 @@ namespace PPDesk.Service.Services.PP
         public IEnumerable<SrvEvent> GetEventsByEEvents(IEnumerable<SrvEEvent> eEvents)
         {
             return _mapper.Map<IEnumerable<SrvEvent>>(eEvents);
+        }
+
+        public async Task<IEnumerable<SrvInformationEvent>> GetInformationEventsAsync(string name, EnumEventStatus? status, int page, int limit = 50)
+        {
+            var mdlEvents = await _eventRepository.GetInformationEventsAsync(name, status, page, limit);
+            return _mapper.Map<IEnumerable<SrvInformationEvent>>(mdlEvents);
+        }
+
+        public async Task<IEnumerable<SrvInformationEvent>> GetAllInformationEventsAsync()
+        {
+            var mdlEvents = await _eventRepository.GetAllInformationEventsAsync();
+            return _mapper.Map<IEnumerable<SrvInformationEvent>>(mdlEvents);
+        }
+
+        public async Task<int> CountInformationEventsAsync(string name, EnumEventStatus? status)
+        {
+            return await _eventRepository.CountInformationEventsAsync(name, status);
+        }
+
+        public async Task<int> CountAllInformationEventsAsync()
+        {
+            return await _eventRepository.CountAllInformationEventsAsync();
         }
 
         public async Task InsertEventsAsync(IEnumerable<SrvEvent> srvEvents)
