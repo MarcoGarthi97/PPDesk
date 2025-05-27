@@ -26,6 +26,10 @@ namespace PPDesk.ViewModels
         private string? _totalRecordsText;
         private string? _pageText;
         private ComboBoxEventUI? _selectedEvent;
+        private ComboBoxStatusEventUI? _selectedStatusEvent;
+        private ComboBoxTypeTableUI? _selectedTypeTable;
+        private string _selectedNameGdr;
+        private string _selectedMaster;
         public ComboBoxEventUI? SelectedEvent
         {
             get => _selectedEvent;
@@ -35,9 +39,45 @@ namespace PPDesk.ViewModels
                 EventName = value?.Name;
             }
         }
+
+        public ComboBoxStatusEventUI? SelectedStatusEvent
+        {
+            get => _selectedStatusEvent;
+            set
+            {
+                SetProperty(ref _selectedStatusEvent, value);
+                EventStatus = (EnumEventStatus)value?.Id!;
+            }
+        }
+
+        public ComboBoxTypeTableUI? SelectedTypeStable
+        {
+            get => _selectedTypeTable;
+            set
+            {
+                SetProperty(ref _selectedTypeTable, value);
+                TableType = (EnumTableType)value?.Id!;
+            }
+        }
+
         public string? EventName;
-        public string? GdrName;
-        public string? Master;
+        public string? GdrName
+        {
+            get => _selectedNameGdr;
+            set
+            {
+                SetProperty(ref _selectedNameGdr!, value);
+            }
+        }
+        public string? Master
+        {
+            get => _selectedMaster;
+            set
+            {
+                SetProperty(ref _selectedMaster!, value);
+            }
+        }
+
         public EnumEventStatus? EventStatus;
         public EnumTableType? TableType;
         public string? TotalRecordsText
@@ -52,6 +92,8 @@ namespace PPDesk.ViewModels
         }
         public ObservableCollection<SrvInformationTable> Tables { get; } = new ObservableCollection<SrvInformationTable>();
         public ObservableCollection<ComboBoxEventUI> ListEvents { get; } = new ObservableCollection<ComboBoxEventUI>();
+        public ObservableCollection<ComboBoxStatusEventUI> ListStatusEvents { get; } = new ObservableCollection<ComboBoxStatusEventUI>();
+        public ObservableCollection<ComboBoxTypeTableUI> ListTypeTables { get; } = new ObservableCollection<ComboBoxTypeTableUI>();
         public IAsyncRelayCommand LoadTablesCommand { get; }
         public int _page = 0;
         public int _count = -1;
@@ -85,6 +127,8 @@ namespace PPDesk.ViewModels
         private async Task InitializeComboBoxesAsync()
         {
             await InitializeComboBoxEventsAsync();
+            InitializeComboBoxStatusEvent();
+            InitializeComboBoxTypeTable();
         }
 
         private async Task InitializeComboBoxEventsAsync()
@@ -96,6 +140,33 @@ namespace PPDesk.ViewModels
             {
                 ListEvents.Add(e);
             }
+        }
+
+        private void InitializeComboBoxStatusEvent()
+        {
+            var statusEvents = new List<ComboBoxStatusEventUI> {
+                new ComboBoxStatusEventUI(0, "Bozza"),
+                new ComboBoxStatusEventUI(1, "Live"),
+                new ComboBoxStatusEventUI(2, "Iniziato"),
+                new ComboBoxStatusEventUI(3, "Concluso"),
+                new ComboBoxStatusEventUI(4, "Completato"),
+                new ComboBoxStatusEventUI(5, "Cancellato")
+            };
+
+            ListStatusEvents.Clear();
+            statusEvents.ForEach(x => ListStatusEvents.Add(x));
+        }
+
+        private void InitializeComboBoxTypeTable()
+        {
+            var typeTables = new List<ComboBoxTypeTableUI>
+            {
+                new ComboBoxTypeTableUI(0, "Sessione Gdr"),
+                new ComboBoxTypeTableUI(1, "Multi Tavolo")
+            };
+
+            ListTypeTables.Clear();
+            typeTables.ForEach(x => ListTypeTables.Add(x));
         }
 
         public async Task<IEnumerable<SrvInformationTable>> FilterTablesAsync()

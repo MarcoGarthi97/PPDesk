@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace PPDesk.Abstraction.DTO.UI
 {
-    public class ComboBoxEventUI
+    public class ComboBoxEventUI : HelperSimpleComboBoxUI
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }
