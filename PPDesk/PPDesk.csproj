@@ -13,6 +13,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Pages\EventsPage.xaml" />
     <None Remove="Pages\TablesPage.xaml" />
     <None Remove="Pages\UsersPage.xaml" />
     <None Remove="UsersPage.xaml" />
@@ -56,6 +57,11 @@
   <ItemGroup>
     <ProjectReference Include="..\PPDesk.Abstraction\PPDesk.Abstraction.csproj" />
     <ProjectReference Include="..\PPDesk.Service\PPDesk.Service.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\EventsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\TablesPage.xaml">

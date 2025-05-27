@@ -21,7 +21,7 @@
             <muxc:NavigationViewItem Content="Tavoli" Icon="List" Tag="tablesPage"/>
             <muxc:NavigationViewItem Content="Ordini" Icon="List"     Tag="ordiniPage"/>
             <muxc:NavigationViewItem Content="Utenti" Icon="Contact"  Tag="usersPage"/>
-            <muxc:NavigationViewItem Content="Info"   Icon="Help"     Tag="aboutPage"/>
+            <muxc:NavigationViewItem Content="Eventi"   Icon="Help"     Tag="eventsPage"/>
         </muxc:NavigationView.MenuItems>
 
         <Frame x:Name="ContentFrame">
