@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using PPDesk.Abstraction.DTO.Repository;
+using PPDesk.Abstraction.DTO.Repository.Order;
 using PPDesk.Abstraction.DTO.Response.Eventbride.Order;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
-using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Order;
 using System;
 
 namespace PPDesk.Service.Mapper
@@ -22,6 +22,10 @@ namespace PPDesk.Service.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(from => from.Profile.Name));
 
             CreateMap<SrvOrder, MdlOrder>().ReverseMap();
+
+            CreateMap<SrvOrder, SrvInformationOrder>();
+
+            CreateMap<MdlInformationOrder, SrvInformationOrder>().ReverseMap();
         }
     }
 }

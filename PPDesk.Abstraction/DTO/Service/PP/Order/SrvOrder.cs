@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PPDesk.Abstraction.DTO.Service.PP
+namespace PPDesk.Abstraction.DTO.Service.PP.Order
 {
     public class SrvOrder
     {
