@@ -74,6 +74,10 @@ namespace PPDesk
                         var ordersPage = _serviceProvider.GetRequiredService<OrdersPage>();
                         ContentFrame.Content = ordersPage;
                         break;
+                    case "settingsPage":
+                        var settingsPage = _serviceProvider.GetRequiredService<SettingsPage>();
+                        ContentFrame.Content = settingsPage;
+                        break;
                 }
             }
         }

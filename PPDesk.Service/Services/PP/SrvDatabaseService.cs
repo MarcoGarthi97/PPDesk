@@ -14,6 +14,9 @@ namespace PPDesk.Service.Services.PP
     public interface ISrvDatabaseService : IForServiceCollectionExtension
     {
         Task CreateTablesAsync();
+        Task CreateTablesAsync(IProgress<string> progress = null);
+        Task LoadAllDataAsync();
+        Task LoadAllDataAsync(IProgress<string> progress = null);
         Task LoadDatabaseExists();
     }
 
@@ -93,6 +96,80 @@ namespace PPDesk.Service.Services.PP
 
             var tables = _tableService.GetTablesByETicketClasses(tickets);
             await _tableService.InsertTablesAsync(tables);
+        }
+
+        public async Task CreateTablesAsync(IProgress<string> progress = null)
+        {
+            progress?.Report("Controllo versione database...");
+            string version = await _versionService.GetVersionAsync();
+
+            if (string.IsNullOrEmpty(version))
+            {
+                progress?.Report("Creazione tabella Versioni...");
+                await _versionService.CreateTableVersionAsync();
+
+                progress?.Report("Creazione tabella Utenti...");
+                await _userService.CreateTableUsersAsync();
+
+                progress?.Report("Creazione tabella Tables...");
+                await _tableService.CreateTableTablesAsync();
+
+                progress?.Report("Creazione tabella Ordini...");
+                await _orderService.CreateTableOrdersAsync();
+
+                progress?.Report("Creazione tabella Eventi...");
+                await _eventService.CreateTableEventsAsync();
+
+                progress?.Report("Inserimento versione iniziale...");
+                await _versionService.InsertVersionAsync();
+
+                progress?.Report("Database creato con successo!");
+            }
+            else
+            {
+                progress?.Report("Database già esistente, nessuna creazione necessaria.");
+            }
+
+            await LoadDatabaseExists();
+        }
+
+        public async Task LoadAllDataAsync(IProgress<string> progress = null)
+        {
+            progress?.Report("Pulizia dati esistenti...");
+            await _userService.DeleteAllUsers();
+            await _eventService.DeleteAllEvents();
+            await _orderService.DeleteAllOrders();
+            await _tableService.DeleteAllTablesAsync();
+
+            progress?.Report("Caricamento organizzazioni...");
+            await _eOrganizationService.LoadOrganizationsAsync();
+
+            progress?.Report("Recupero ordini da Eventbrite...");
+            var eOrders = await _eOrderService.GetListOrdersByOrganizationIdAsync();
+
+            progress?.Report("Elaborazione utenti...");
+            var users = _userService.GetUsersByEOrders(eOrders);
+            await _userService.InsertUsersAsync(users);
+
+            progress?.Report("Elaborazione ordini...");
+            var orders = _orderService.GetOrdersByEOrders(eOrders);
+            await _orderService.InsertOrdersAsync(orders);
+
+            progress?.Report("Recupero eventi da Eventbrite...");
+            var eEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
+
+            progress?.Report("Elaborazione eventi...");
+            var events = _eventService.GetEventsByEEvents(eEvents);
+            await _eventService.InsertEventsAsync(events);
+
+            progress?.Report("Recupero classi biglietti...");
+            var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
+
+            progress?.Report("Elaborazione tabelle...");
+            var tables = _tableService.GetTablesByETicketClasses(tickets);
+            await _tableService.InsertTablesAsync(tables);
+
+            progress?.Report("Caricamento dati completato!");
         }
     }
 }
