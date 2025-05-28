@@ -153,6 +153,10 @@ namespace PPDesk.Pages
                     {
                         ComboBoxStatusEvent.SelectedItem = null;
                     }
+                    else if (((ComboBox)sender).Name == "ComboBoxTypeTable")
+                    {
+                        ComboBoxTypeTable.SelectedItem = null;
+                    }
                 }
             }
             catch (Exception ex)

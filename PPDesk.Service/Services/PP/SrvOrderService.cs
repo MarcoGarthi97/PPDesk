@@ -17,11 +17,11 @@ namespace PPDesk.Service.Services.PP
     public interface ISrvOrderService : IForServiceCollectionExtension
     {
         Task<int> CountAllInformationOrdersAsync();
-        Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status);
+        Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, EnumTableType? type);
         Task CreateTableOrdersAsync();
         Task DeleteAllOrders();
         Task<IEnumerable<SrvInformationOrder>> GetAllInformationOrdersAsync();
-        Task<IEnumerable<SrvInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, int page, int limit = 50);
+        Task<IEnumerable<SrvInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit = 50);
         Task<IEnumerable<SrvOrder>> GetOrdersAsync(int page, int limit = 50);
         IEnumerable<SrvOrder> GetOrdersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertOrdersAsync(IEnumerable<SrvOrder> srvOrders);
@@ -71,9 +71,9 @@ namespace PPDesk.Service.Services.PP
             return _mapper.Map<IEnumerable<SrvOrder>>(mdlOrders);
         }
 
-        public async Task<IEnumerable<SrvInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, int page, int limit = 50)
+        public async Task<IEnumerable<SrvInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit = 50)
         {
-            var mdlOrders = await _orderRepository.GetInformationOrdersAsync(name, nameOrder, gdrName, master, status, page, limit);
+            var mdlOrders = await _orderRepository.GetInformationOrdersAsync(name, nameOrder, gdrName, master, status, type, page, limit);
             return _mapper.Map<IEnumerable<SrvInformationOrder>>(mdlOrders);
         }
 
@@ -83,9 +83,9 @@ namespace PPDesk.Service.Services.PP
             return _mapper.Map<IEnumerable<SrvInformationOrder>>(mdlOrders);
         }
 
-        public async Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status)
+        public async Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, EnumTableType? type)
         {
-            return await _orderRepository.CountInformationOrdersAsync(name, nameOrder, gdrName, master, status);
+            return await _orderRepository.CountInformationOrdersAsync(name, nameOrder, gdrName, master, status, type);
         }
 
         public async Task<int> CountAllInformationOrdersAsync()

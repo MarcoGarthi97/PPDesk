@@ -12,6 +12,7 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
         public int Quantity { get; set; }
         public string EventName { get; set; }
         public EnumEventStatus StatusEvent { get; set; }
+        public EnumTableType TypeTable { get; set; }
         public string GdrName { get; set; }
         public string Master { get; set; }
     }

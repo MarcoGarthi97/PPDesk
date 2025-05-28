@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Z.BulkOperations.Internal.InformationSchema;
 
 namespace PPDesk.ViewModels
 {
@@ -25,6 +26,7 @@ namespace PPDesk.ViewModels
         private string? _pageText;
         private ComboBoxEventUI? _selectedEvent;
         private ComboBoxStatusEventUI? _selectedStatusEvent;
+        private ComboBoxTypeTableUI? _selectedTypeTable;
         private string _selectedNameGdr;
         private string _selectedMaster;
         private string _selectedName;
@@ -45,6 +47,15 @@ namespace PPDesk.ViewModels
             {
                 SetProperty(ref _selectedStatusEvent, value);
                 EventStatus = value == null ? null : (EnumEventStatus)value?.Id!;
+            }
+        }
+        public ComboBoxTypeTableUI? SelectedTypeStable
+        {
+            get => _selectedTypeTable;
+            set
+            {
+                SetProperty(ref _selectedTypeTable, value);
+                TypeTable = value == null ? null : (EnumTableType)value?.Id!;
             }
         }
         public string? GdrName
@@ -73,6 +84,7 @@ namespace PPDesk.ViewModels
         }
         public string? EventName;
         public EnumEventStatus? EventStatus;
+        public EnumTableType? TypeTable;
         public string? TotalRecordsText
         {
             get => _totalRecordsText;
@@ -86,6 +98,7 @@ namespace PPDesk.ViewModels
         public ObservableCollection<SrvInformationOrder> Orders { get; } = new ObservableCollection<SrvInformationOrder>();
         public ObservableCollection<ComboBoxEventUI> ListEvents { get; } = new ObservableCollection<ComboBoxEventUI>();
         public ObservableCollection<ComboBoxStatusEventUI> ListStatusEvents { get; } = new ObservableCollection<ComboBoxStatusEventUI>();
+        public ObservableCollection<ComboBoxTypeTableUI> ListTypeTables { get; } = new ObservableCollection<ComboBoxTypeTableUI>();
         public IAsyncRelayCommand LoadOrdersCommand { get; }
         public int _page = 0;
         public int _count = -1;
@@ -121,6 +134,7 @@ namespace PPDesk.ViewModels
         {
             await InitializeComboBoxEventsAsync();
             InitializeComboBoxStatusEvent();
+            InitializeComboBoxTypeTable();
         }
 
         private async Task InitializeComboBoxEventsAsync()
@@ -149,6 +163,18 @@ namespace PPDesk.ViewModels
             statusEvents.ForEach(x => ListStatusEvents.Add(x));
         }
 
+        private void InitializeComboBoxTypeTable()
+        {
+            var typeTables = new List<ComboBoxTypeTableUI>
+            {
+                new ComboBoxTypeTableUI(0, "Sessione Gdr"),
+                new ComboBoxTypeTableUI(1, "Multi Tavolo")
+            };
+
+            ListTypeTables.Clear();
+            typeTables.ForEach(x => ListTypeTables.Add(x));
+        }
+
         public async Task<IEnumerable<SrvInformationOrder>> FilterOrdersAsync()
         {
             IEnumerable<SrvInformationOrder> ordersTemp = new List<SrvInformationOrder>();
@@ -166,8 +192,8 @@ namespace PPDesk.ViewModels
             }
             else
             {
-                ordersTemp = await _orderService.GetInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus, _page);
-                _count = await _orderService.CountInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus);
+                ordersTemp = await _orderService.GetInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus, TypeTable, _page);
+                _count = await _orderService.CountInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus, TypeTable);
             }
 
             TotalRecordsText = $"Records: {_count}";
@@ -187,7 +213,9 @@ namespace PPDesk.ViewModels
                         (string.IsNullOrWhiteSpace(Master) ||
                              e.Master != null && e.Master.ToLower().Contains(Master.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
             (!EventStatus.HasValue ||
-                             e.StatusEvent == EventStatus);
+                             e.StatusEvent == EventStatus) &&
+            (!TypeTable.HasValue ||
+                             e.TypeTable == TypeTable);
         }
 
         public async Task<int> OrdersCountAsync()

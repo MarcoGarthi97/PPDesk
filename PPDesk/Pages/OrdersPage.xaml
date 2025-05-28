@@ -15,6 +15,7 @@
     <Page.Resources>
         <converters:DateConverter x:Key="DateConverter"/>
         <converters:EnumEventStatusConverter x:Key="EnumEventStatusConverter"/>
+        <converters:EnumTableTypeConverter x:Key="EnumTableTypeConverter"/>
     </Page.Resources>
 
     <Grid Padding="20">
@@ -27,6 +28,7 @@
 
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
@@ -63,9 +65,23 @@ KeyDown="OnPageKeyDown" />
         HorizontalAlignment="Stretch"
 KeyDown="OnPageKeyDown" />
             </StackPanel>
+            
+            <!-- ComboBox Type Table -->
+            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                <ComboBox
+            x:Name="ComboBoxTypeTable"
+            Header="Selezione tipo tavolo"
+            PlaceholderText="Seleziona tavolo..."
+            ItemsSource="{Binding ListTypeTables}"
+            SelectedItem="{Binding SelectedTypeStable, Mode=TwoWay}"
+            DisplayMemberPath="Name"
+            SelectedValuePath="Id"
+            HorizontalAlignment="Stretch"
+    KeyDown="OnPageKeyDown" />
+            </StackPanel>
 
             <!-- TextBox Nome Gdr -->
-            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+            <StackPanel Grid.Column="3" Margin="0,0,10,0">
                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
              Header="Nome giocatore"
              PlaceholderText="Inserisci nome"
@@ -73,7 +89,7 @@ KeyDown="OnPageKeyDown" />
             </StackPanel>
 
             <!-- TextBox Nome Gdr -->
-            <StackPanel Grid.Column="3" Margin="0,0,10,0">
+            <StackPanel Grid.Column="4" Margin="0,0,10,0">
                 <TextBox Text="{Binding GdrName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
              Header="Nome Gdr"
              PlaceholderText="Inserisci nome gdr"
@@ -81,7 +97,7 @@ KeyDown="OnPageKeyDown" />
             </StackPanel>
 
             <!-- TextBox Nome Master -->
-            <StackPanel Grid.Column="4" Margin="0,0,10,0">
+            <StackPanel Grid.Column="5" Margin="0,0,10,0">
                 <TextBox Text="{Binding Master, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
              Header="Nome Master"
              PlaceholderText="Inserisci nome master"
@@ -90,7 +106,7 @@ KeyDown="OnPageKeyDown" />
 
             <!-- Button Applica -->
             <Button
-    Grid.Column="5"
+    Grid.Column="6"
     Content="Applica"
     Click="FilterButton_Click"
     Margin="10,25,0,0"
@@ -110,6 +126,7 @@ KeyDown="OnPageKeyDown" />
                 <controls:DataGridTextColumn Header="Nome" Tag="Name" Binding="{Binding Name}" />
                 <controls:DataGridTextColumn Header="Nome GDR" Tag="GdrName" Binding="{Binding GdrName}" />
                 <controls:DataGridTextColumn Header="Master" Tag="Master" Binding="{Binding Master}" />
+                <controls:DataGridTextColumn Header="Tipologia" Tag="TypeTable" Binding="{Binding TypeTable, Converter={StaticResource EnumTableTypeConverter }}" />
                 <controls:DataGridTextColumn Header="Posti prenotati" Tag="Quantity" Binding="{Binding Quantity}" />
                 <controls:DataGridTextColumn Header="Data ordine" Tag="DateOrder" Binding="{Binding DateOrder, Converter={StaticResource DateConverter}}" />
 
