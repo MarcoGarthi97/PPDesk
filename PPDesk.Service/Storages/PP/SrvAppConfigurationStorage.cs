@@ -22,5 +22,10 @@ namespace PPDesk.Service.Storages.PP
         {
             DatabaseConfiguration = databaseConfiguration;
         }
+
+        public static void SetDatabaseExists(bool exists)
+        {
+            DatabaseConfiguration.DatabaseExists = exists;
+        }
     }
 }

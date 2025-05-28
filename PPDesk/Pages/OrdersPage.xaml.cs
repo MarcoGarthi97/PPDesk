@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using PPDesk.Abstraction.DTO.UI;
 using PPDesk.ViewModels;
 using Windows.System;
+using PPDesk.Service.Storages.PP;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,12 +34,65 @@ namespace PPDesk.Pages
 
         public OrdersPage(OrderViewModel orderViewModel, ILogger<OrdersPage> logger)
         {
+            _logger = logger;
             this.InitializeComponent();
             this.DataContext = orderViewModel;
 
-            OrdersCountAsync();
-            LoadOrdersAsync();
-            _logger = logger;
+            LoadComponents();
+        }
+
+        private void LoadComponents()
+        {
+            if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
+            {
+                OrdersCountAsync();
+                LoadOrdersAsync();
+                InitializeComboBoxesAsync();
+            }
+            else
+            {
+                this.Loaded += TablesPage_Loaded;
+            }
+        }
+
+        private void TablesPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= TablesPage_Loaded; 
+            ShowDatabaseNotFoundAlertAsync();
+        }
+
+        private async void ShowDatabaseNotFoundAlertAsync()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Database non trovato",
+                Content = "Il database non esiste. Andare nelle impostazioni per crearlo",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            try
+            {
+                await dialog.ShowAsync();
+                _logger.LogWarning("Database non trovato - alert mostrato all'utente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante la visualizzazione dell'alert");
+            }
+        }
+
+        private async void InitializeComboBoxesAsync()
+        {
+            try
+            {
+                var orderViewModel = (OrderViewModel)DataContext;
+                await orderViewModel.InitializeComboBoxesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void LoadOrdersAsync()

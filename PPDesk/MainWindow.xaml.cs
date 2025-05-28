@@ -49,8 +49,6 @@ namespace PPDesk
         private async void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
-
-            await _service.Test();
         }
 
         private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

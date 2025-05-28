@@ -17,6 +17,7 @@ using CommunityToolkit.WinUI.UI.Controls;
 using Windows.System;
 using PPDesk.Abstraction.Helper;
 using Microsoft.Extensions.Logging;
+using PPDesk.Service.Storages.PP;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,12 +33,51 @@ namespace PPDesk.Pages
         private readonly ILogger<UsersPage> _logger;
         public UsersPage(UserViewModel userViewModel, ILogger<UsersPage> logger)
         {
+            _logger = logger;
             this.InitializeComponent();
             this.DataContext = userViewModel;
 
-            UsersCountAsync();
-            LoadUsersAsync();
-            _logger = logger;
+            LoadComponents();
+        }
+
+        private void LoadComponents()
+        {
+            if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
+            {
+                UsersCountAsync();
+                LoadUsersAsync();
+            }
+            else
+            {
+                this.Loaded += TablesPage_Loaded;
+            }
+        }
+
+        private void TablesPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= TablesPage_Loaded; 
+            ShowDatabaseNotFoundAlertAsync();
+        }
+
+        private async void ShowDatabaseNotFoundAlertAsync()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Database non trovato",
+                Content = "Il database non esiste. Andare nelle impostazioni per crearlo",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            try
+            {
+                await dialog.ShowAsync();
+                _logger.LogWarning("Database non trovato - alert mostrato all'utente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante la visualizzazione dell'alert");
+            }
         }
 
         private async void LoadUsersAsync()
