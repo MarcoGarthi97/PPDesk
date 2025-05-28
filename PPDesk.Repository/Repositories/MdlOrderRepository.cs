@@ -15,11 +15,11 @@ namespace PPDesk.Repository.Repositories
     public interface IMdlOrderRepository : IForServiceCollectionExtension
     {
         Task<int> CountAllInformationOrdersAsync();
-        Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status);
+        Task<int> CountInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type);
         Task CreateTableOrdersAsync();
         Task DeleteAllOrdersAsync();
         Task<IEnumerable<MdlInformationOrder>> GetAllInformationOrdersAsync();
-        Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, int page, int limit);
+        Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit);
         Task<IEnumerable<MdlOrder>> GetOrdersAsync(int page, int limit);
         Task InsertOrdersAsync(IEnumerable<MdlOrder> orders);
     }
@@ -46,18 +46,18 @@ namespace PPDesk.Repository.Repositories
                 )");
         }
 
-        public async Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, int page, int limit)
+        public async Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit)
         {
             int offset = page * limit;
 
-            string sql = @"SELECT O.Id, O.IdOrderbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS NameOrder, E.Status AS StatusOrder, T.GdrName AS GdrName, T.Master 
+            string sql = @"SELECT O.Id, O.IdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
                         from ORDERS O
                         JOIN EVENTS E
-                        ON O.OrderIdOrderbride = E.IdOrderbride
+                        ON O.EventIdEventbride = E.IdEventbride
                         JOIN TABLES T
-                        ON O.TableIdOrderbride = T.IdOrderbride WHERE 1 = 1";
+                        ON O.TableIdEventbride = T.IdEventbride WHERE 1 = 1";
 
-            sql += WhereOrders(name, nameOrder, gdrName, master, status);
+            sql += WhereOrders(name, eventName, gdrName, master, status, type);
 
             sql += "ORDER BY Start ASC " +
                 "LIMIT @limit OFFSET @offset;";
@@ -65,38 +65,46 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             return await connection.QueryAsync<MdlInformationOrder>(sql, new
             {
+                name,
+                eventName,
+                gdrName,
+                master,
+                status,
+                type,
                 offset,
                 limit,
-                name,
-                status
             });
         }
 
         public async Task<IEnumerable<MdlInformationOrder>> GetAllInformationOrdersAsync()
         {
-            string sql = @"SELECT O.Id, O.IdOrderbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS NameOrder, E.Status AS StatusOrder, T.GdrName AS GdrName, T.Master 
+            string sql = @"SELECT O.Id, O.IdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
                         from ORDERS O
                         JOIN EVENTS E
-                        ON O.OrderIdOrderbride = E.IdOrderbride
+                        ON O.EventIdEventbride = E.IdEventbride
                         JOIN TABLES T
-                        ON O.TableIdOrderbride = T.IdOrderbride WHERE 1 = 1"" WHERE 1 = 1";
+                        ON O.TableIdEventbride = T.IdEventbride WHERE 1 = 1";
 
             var connection = await _connectionFactory.CreateConnectionAsync();
             return await connection.QueryAsync<MdlInformationOrder>(sql);
         }
 
-        public async Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status)
+        public async Task<int> CountInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type)
         {
             string sql = @"SELECT COUNT(*)
                         FROM EVENTS E WHERE 1 = 1";
 
-            sql += WhereOrders(name, nameOrder, gdrName, master, status);
+            sql += WhereOrders(name, eventName, gdrName, master, status, type);
 
             var connection = await _connectionFactory.CreateConnectionAsync();
             return await connection.QueryFirstAsync<int>(sql, new
             {
                 name,
-                status
+                eventName,
+                gdrName,
+                master,
+                status,
+                type
             });
         }
 
@@ -109,7 +117,7 @@ namespace PPDesk.Repository.Repositories
             return await connection.QueryFirstAsync<int>(sql);
         }
 
-        private string WhereOrders(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status)
+        private string WhereOrders(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -118,9 +126,9 @@ namespace PPDesk.Repository.Repositories
                 sb.Append("AND O.Name LIKE %@name%");
             }
 
-            if (!string.IsNullOrEmpty(nameOrder))
+            if (!string.IsNullOrEmpty(eventName))
             {
-                sb.Append("AND E.Name LIKE %@nameOrder%");
+                sb.Append("AND E.Name LIKE %@eventName%");
             }
 
             if (!string.IsNullOrEmpty(gdrName))
@@ -136,6 +144,11 @@ namespace PPDesk.Repository.Repositories
             if (status.HasValue)
             {
                 sb.AppendLine("AND E.Status = @status");
+            }
+
+            if (type.HasValue)
+            {
+                sb.AppendLine("AND T.Type = @type");
             }
 
             return sb.ToString();

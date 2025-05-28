@@ -25,13 +25,16 @@ namespace PPDesk.ViewModels
         private string? _pageText;
         private ComboBoxEventUI? _selectedEvent;
         private ComboBoxStatusEventUI? _selectedStatusEvent;
+        private string _selectedNameGdr;
+        private string _selectedMaster;
+        private string _selectedName;
         public ComboBoxEventUI? SelectedEvent
         {
             get => _selectedEvent;
             set
             {
                 SetProperty(ref _selectedEvent, value);
-                OrderName = value?.Name;
+                EventName = value?.Name;
             }
         }
 
@@ -41,11 +44,35 @@ namespace PPDesk.ViewModels
             set
             {
                 SetProperty(ref _selectedStatusEvent, value);
-                OrderStatus = value == null ? null : (EnumEventStatus)value?.Id!;
+                EventStatus = value == null ? null : (EnumEventStatus)value?.Id!;
             }
         }
-        public string? OrderName;
-        public EnumEventStatus? OrderStatus;
+        public string? GdrName
+        {
+            get => _selectedNameGdr;
+            set
+            {
+                SetProperty(ref _selectedNameGdr!, value);
+            }
+        }
+        public string? Master
+        {
+            get => _selectedMaster;
+            set
+            {
+                SetProperty(ref _selectedMaster!, value);
+            }
+        }
+        public string? Name
+        {
+            get => _selectedName;
+            set
+            {
+                SetProperty(ref _selectedName!, value);
+            }
+        }
+        public string? EventName;
+        public EnumEventStatus? EventStatus;
         public string? TotalRecordsText
         {
             get => _totalRecordsText;
@@ -139,8 +166,8 @@ namespace PPDesk.ViewModels
             }
             else
             {
-                ordersTemp = await _orderService.GetInformationOrdersAsync(OrderName, OrderStatus, _page);
-                _count = await _orderService.CountInformationOrdersAsync(OrderName, OrderStatus);
+                ordersTemp = await _orderService.GetInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus, _page);
+                _count = await _orderService.CountInformationOrdersAsync(Name, EventName, GdrName, Master, EventStatus);
             }
 
             TotalRecordsText = $"Records: {_count}";
@@ -151,10 +178,16 @@ namespace PPDesk.ViewModels
 
         private Func<SrvInformationOrder, bool> CreatePredicate()
         {
-            return e => (string.IsNullOrWhiteSpace(OrderName) ||
-                             e.Name != null && e.Name.ToLower().Contains(OrderName.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
-            (!OrderStatus.HasValue ||
-                             e.Status == OrderStatus);
+            return e => (string.IsNullOrWhiteSpace(Name) ||
+                             e.Name != null && e.Name.ToLower().Contains(Name.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(EventName) ||
+                             e.EventName != null && e.EventName.ToLower().Contains(EventName.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(GdrName) ||
+                             e.GdrName != null && e.GdrName.ToLower().Contains(GdrName.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(Master) ||
+                             e.Master != null && e.Master.ToLower().Contains(Master.ToLower(), StringComparison.OrdinalIgnoreCase)) &&
+            (!EventStatus.HasValue ||
+                             e.StatusEvent == EventStatus);
         }
 
         public async Task<int> OrdersCountAsync()
@@ -200,30 +233,35 @@ namespace PPDesk.ViewModels
                         ? ordersTemp.OrderBy(x => x.Name).ToList()
                         : ordersTemp.OrderByDescending(x => x.Name).ToList();
                     break;
-                case "Status":
+                case "DateOrder":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.Status).ToList()
-                        : ordersTemp.OrderByDescending(x => x.Status).ToList();
+                        ? ordersTemp.OrderBy(x => x.DateOrder).ToList()
+                        : ordersTemp.OrderByDescending(x => x.DateOrder).ToList();
                     break;
-                case "Start":
+                case "Quantity":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.Start).ToList()
-                        : ordersTemp.OrderByDescending(x => x.Start).ToList();
+                        ? ordersTemp.OrderBy(x => x.Quantity).ToList()
+                        : ordersTemp.OrderByDescending(x => x.Quantity).ToList();
                     break;
-                case "End":
+                case "EventName":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.End).ToList()
-                        : ordersTemp.OrderByDescending(x => x.End).ToList();
+                        ? ordersTemp.OrderBy(x => x.EventName).ToList()
+                        : ordersTemp.OrderByDescending(x => x.EventName).ToList();
                     break;
-                case "TotalUsers":
+                case "StatusEvent":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.TotalUsers).ToList()
-                        : ordersTemp.OrderByDescending(x => x.TotalUsers).ToList();
+                        ? ordersTemp.OrderBy(x => x.StatusEvent).ToList()
+                        : ordersTemp.OrderByDescending(x => x.StatusEvent).ToList();
                     break;
-                case "TotalTicket":
+                case "GdrName":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.TotalTicket).ToList()
-                        : ordersTemp.OrderByDescending(x => x.TotalTicket).ToList();
+                        ? ordersTemp.OrderBy(x => x.GdrName).ToList()
+                        : ordersTemp.OrderByDescending(x => x.GdrName).ToList();
+                    break;
+                case "Master":
+                    ordersTemp = isAscending
+                        ? ordersTemp.OrderBy(x => x.Master).ToList()
+                        : ordersTemp.OrderByDescending(x => x.Master).ToList();
                     break;
                 default:
                     break;

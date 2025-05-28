@@ -10,7 +10,7 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
         public string Name { get; set; }
         public DateTime DateOrder { get; set; }
         public int Quantity { get; set; }
-        public string NameEvent { get; set; }
+        public string EventName { get; set; }
         public EnumEventStatus StatusEvent { get; set; }
         public string GdrName { get; set; }
         public string Master { get; set; }

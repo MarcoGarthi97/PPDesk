@@ -19,8 +19,10 @@ namespace PPDesk.Abstraction.DTO.Repository.Order
         public DateTime DateOrder { get; set; }
         [Column("Quantity")]
         public int Quantity { get; set; }
-        [Column("NameEvent")]
-        public string NameEvent { get; set; }
+        [Column("EventName")]
+        public string EventName { get; set; }
+        [Column("TypeTable")]
+        public EnumTableType TypeTable { get; set; }
         [Column("StatusEvent")]
         public EnumEventStatus StatusEvent { get; set; }
         [Column("GdrName")]

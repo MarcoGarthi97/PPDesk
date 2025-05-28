@@ -145,13 +145,13 @@ namespace PPDesk.Pages
                 }
                 else if (e.Key == VirtualKey.Back && sender is ComboBox comboBox)
                 {
-                    if (((ComboBox)sender).Name == "ComboBoxOrder")
+                    if (((ComboBox)sender).Name == "ComboBoxEvent")
                     {
-                        ComboBoxOrder.SelectedItem = null;
+                        ComboBoxEvent.SelectedItem = null;
                     }
-                    else if (((ComboBox)sender).Name == "ComboBoxStatusOrder")
+                    else if (((ComboBox)sender).Name == "ComboBoxStatusEvent")
                     {
-                        ComboBoxStatusOrder.SelectedItem = null;
+                        ComboBoxStatusEvent.SelectedItem = null;
                     }
                 }
             }

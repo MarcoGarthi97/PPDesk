@@ -22,6 +22,10 @@ namespace PPDesk.Service.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(from => from.Profile.Name));
 
             CreateMap<SrvOrder, MdlOrder>().ReverseMap();
+
+            CreateMap<SrvOrder, SrvInformationOrder>();
+
+            CreateMap<MdlInformationOrder, SrvInformationOrder>().ReverseMap();
         }
     }
 }
