@@ -17,6 +17,26 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using PPDesk.Repository.Collection;
+using PPDesk.Service.Collection;
+using System.Threading.Tasks;
+using Windows.Storage;
+using PPDesk.Repository.Factory;
+using PPDesk.Service.Services.PP;
+using AutoMapper;
+using PPDesk.Service.Services.Window;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using PPDesk.Abstraction.DTO.Service.Eventbrite;
+using PPDesk.Service.Storages.Eventbride;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using Z.Dapper.Plus;
+using PPDesk.Pages;
+using PPDesk.ViewModels;
+using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Service.Storages.PP;
+using PPDesk.Helper.Collection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,15 +56,23 @@ namespace PPDesk
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-
             _host = Host.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((ctx, cfg) =>
+                {
+                    cfg.SetBasePath(AppContext.BaseDirectory)
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
                 .ConfigureServices((context, services) =>
                 {
-                    // Registrazione dei servizi
-                    ConfigureServices(services);
+                    services.AddSingleton<IConfiguration>(context.Configuration);
+                    ConfigureServices(services, context.Configuration);
                 })
                 .Build();
+
+
+            InizializeDatabase().Wait();
+
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -53,13 +81,53 @@ namespace PPDesk
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
+            var mainWindowService = _host.Services.GetRequiredService<ISrvMainWindowService>();
+            m_window = new MainWindow(mainWindowService, _host.Services);
             m_window.Activate();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private void ConfigureServices(IServiceCollection services, IConfiguration config)
         {
+            services.AddAutoMapper(typeof(App).Assembly,
+                          typeof(SrvVersionService).Assembly);
 
+            services.AddSharedLibrary();
+            services.AddSharedLibraryServices();
+            services.AddSharedLibraryRepositories();
+
+            string dbPath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "app.db");
+            var connectionString = $"Data Source={dbPath}";
+            services.AddSingleton<IDatabaseConnectionFactory>(provider =>
+                new MdlSqliteConnectionFactory(connectionString));
+
+            LoadConfigurations(config);
+        }
+
+        private async Task InizializeDatabase()
+        {
+            //C:\Users\marco\AppData\Local\Packages\dfcae022-bc71-4537-b546-539103578783_2jm902zmczqjy\LocalState
+            var path = ApplicationData.Current.LocalFolder;
+            await ApplicationData.Current.LocalFolder.CreateFileAsync("app.db", CreationCollisionOption.OpenIfExists);
+
+            var databaseService = _host.Services.GetRequiredService<ISrvDatabaseService>();
+            await databaseService.LoadDatabaseExists();
+
+            ConfigurationDatabase();
+        }
+
+        private void ConfigurationDatabase()
+        {
+            RepositoryCollectionExtension.ConfigurationDatabase();
+        }
+
+        private void LoadConfigurations(IConfiguration config)
+        {
+            var apikey = config.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
+            SrvEApiKeyStorage.SetpiKeyStorage(apikey);
+            SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
+
+            var databaseConfiguration = config.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
+            SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
         }
 
         private Window? m_window;

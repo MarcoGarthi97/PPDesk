@@ -11,7 +11,7 @@ namespace PPDesk.Service.Collection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSharedLibrarySrvServices(this IServiceCollection services)
+        public static IServiceCollection AddSharedLibraryServices(this IServiceCollection services)
         {
             services.Scan(scan => scan
             .FromAssemblies(Assembly.GetExecutingAssembly())
