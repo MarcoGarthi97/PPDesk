@@ -162,7 +162,7 @@ namespace PPDesk.Service.Services.PP
             var events = _eventService.GetEventsByEEvents(eEvents);
             await _eventService.InsertEventsAsync(events);
 
-            progress?.Report("Recupero classi biglietti...");
+            progress?.Report("Recupero biglietti...");
             var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
 
             progress?.Report("Elaborazione tabelle...");
