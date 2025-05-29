@@ -67,8 +67,6 @@ namespace PPDesk.ViewModels
             _eventService = eventService;
             LoadEventsCommand = new AsyncRelayCommand(LoadEventsAsync);
             _loadFast = SrvAppConfigurationStorage.DatabaseConfiguration.LoadFast;
-
-            InitializeComboBoxesAsync().Wait();
         }
 
         public async Task LoadEventsAsync()
@@ -87,7 +85,7 @@ namespace PPDesk.ViewModels
             }
         }
 
-        private async Task InitializeComboBoxesAsync()
+        public async Task InitializeComboBoxesAsync()
         {
             await InitializeComboBoxEventsAsync();
             InitializeComboBoxStatusEvent();

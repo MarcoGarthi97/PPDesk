@@ -49,8 +49,6 @@ namespace PPDesk
         private async void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
-
-            await _service.Test();
         }
 
         private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -75,6 +73,10 @@ namespace PPDesk
                     case "ordersPage":
                         var ordersPage = _serviceProvider.GetRequiredService<OrdersPage>();
                         ContentFrame.Content = ordersPage;
+                        break;
+                    case "settingsPage":
+                        var settingsPage = _serviceProvider.GetRequiredService<SettingsPage>();
+                        ContentFrame.Content = settingsPage;
                         break;
                 }
             }

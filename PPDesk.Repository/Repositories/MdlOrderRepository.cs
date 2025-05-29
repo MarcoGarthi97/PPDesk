@@ -35,10 +35,10 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE ORDERS ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                OrderIdOrderbride BIGINT NOT NULL,
-                IdOrderbride BIGINT NOT NULL,
-                OrderIdOrderbride BIGINT NOT NULL,
-                TableIdOrderbride BIGINT NOT NULL,
+                EventIdEventbride BIGINT NOT NULL,
+                IdEventbride BIGINT NOT NULL,
+                OrderIdEventbride BIGINT NOT NULL,
+                TableIdEventbride BIGINT NOT NULL,
                 Name NVARCHAR(255), 
                 Quantity SMALLINT NOT NULL,
                 Created DATETIME NOT NULL, 

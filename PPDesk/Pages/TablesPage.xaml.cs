@@ -8,12 +8,14 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PPDesk.Abstraction.Helper;
+using PPDesk.Service.Storages.PP;
 using PPDesk.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
@@ -32,12 +34,65 @@ namespace PPDesk.Pages
 
         public TablesPage(TableViewModel tableViewModel, ILogger<TablesPage> logger)
         {
+            _logger = logger;
             this.InitializeComponent();
             this.DataContext = tableViewModel;
 
-            TablesCountAsync();
-            LoadTablesAsync();
-            _logger = logger;
+            LoadComponents();
+        }
+
+        private void LoadComponents()
+        {
+            if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
+            {
+                TablesCountAsync();
+                LoadTablesAsync();
+                InitializeComboBoxesAsync();
+            }
+            else
+            {
+                this.Loaded += TablesPage_Loaded;
+            }
+        }
+
+        private void TablesPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= TablesPage_Loaded; 
+            ShowDatabaseNotFoundAlertAsync();
+        }
+
+        private async void ShowDatabaseNotFoundAlertAsync()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Database non trovato",
+                Content = "Il database non esiste. Andare nelle impostazioni per crearlo",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            try
+            {
+                await dialog.ShowAsync();
+                _logger.LogWarning("Database non trovato - alert mostrato all'utente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante la visualizzazione dell'alert");
+            }
+        }
+
+        private async void InitializeComboBoxesAsync()
+        {
+            try
+            {
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.InitializeComboBoxesAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         private async void LoadTablesAsync()
