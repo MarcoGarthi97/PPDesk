@@ -109,9 +109,6 @@ namespace PPDesk
             var path = ApplicationData.Current.LocalFolder;
             await ApplicationData.Current.LocalFolder.CreateFileAsync("app.db", CreationCollisionOption.OpenIfExists);
 
-            var databaseService = _host.Services.GetRequiredService<ISrvDatabaseService>();
-            await databaseService.LoadDatabaseExists();
-
             ConfigurationDatabase();
         }
 
@@ -122,12 +119,6 @@ namespace PPDesk
 
         private void LoadConfigurations(IConfiguration config)
         {
-            var apikey = config.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
-            SrvEApiKeyStorage.SetpiKeyStorage(apikey);
-            SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
-
-            var databaseConfiguration = config.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
-            SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
         }
 
         private Window? m_window;
