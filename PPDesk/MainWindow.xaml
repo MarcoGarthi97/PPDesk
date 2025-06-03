@@ -26,7 +26,6 @@
         </muxc:NavigationView.MenuItems>
 
         <Frame x:Name="ContentFrame">
-            <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
         </Frame>
     </muxc:NavigationView>
 </Window>

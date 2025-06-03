@@ -62,6 +62,7 @@ namespace PPDesk.Pages
                 }
                 else if (result == ContentDialogResult.Secondary)
                 {
+                    await ShowDatabaseCreationProgressAsync();
                     await ShowDataLoadingProgressAsync();
                 }
             }
