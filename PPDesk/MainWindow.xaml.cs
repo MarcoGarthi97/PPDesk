@@ -80,6 +80,8 @@ namespace PPDesk
                 var databaseConfiguration = _configuration.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
                 SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
 
+
+
                 return true;
             }
             catch (Exception ex)

@@ -40,6 +40,11 @@ namespace PPDesk.Pages
             this.InitializeComponent();
         }
 
+        private async void EventbridgeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private async void LoadDatabaseButton_Click(object sender, RoutedEventArgs e)
         {
             try
