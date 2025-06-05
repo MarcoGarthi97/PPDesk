@@ -9,12 +9,9 @@ namespace PPDesk.Service.Storages.Eventbride
         
         public static void SetpiKeyStorage(SrvEApiKey srvEApiKey)
         {
-            if(string.IsNullOrEmpty(srvEApiKey.PrivateToken))
-            {
-                throw new Exception("Errore: file appsettings.json non valorizzato");
-            }
-
             Configuration = srvEApiKey;
+
+            SrvETokenStorage.SetBearer(srvEApiKey.PrivateToken);
         }
     }
 }

@@ -18,14 +18,24 @@ namespace PPDesk.Service.Storages.PP
             EOrganization = eOrganization;
         }
 
-        public static void SetDatabaseConfigurations(SrvDatabaseConfiguration databaseConfiguration)
+        public static void SetDatabaseConfigurations(SrvDatabaseConfigurationBySQL databaseConfigurationSQL)
         {
-            DatabaseConfiguration = databaseConfiguration;
+            CreateSrvDatabaseConfiguration();
+            DatabaseConfiguration.LoadFast = databaseConfigurationSQL.LoadFast;
         }
 
         public static void SetDatabaseExists(bool exists)
         {
+            CreateSrvDatabaseConfiguration();
             DatabaseConfiguration.DatabaseExists = exists;
+        }
+
+        private static void CreateSrvDatabaseConfiguration()
+        {
+            if(DatabaseConfiguration == null)
+            {
+                DatabaseConfiguration = new SrvDatabaseConfiguration();
+            }
         }
     }
 }

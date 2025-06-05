@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Services.PP;
+using PPDesk.Service.Storages.PP;
 using PPDesk.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,50 @@ namespace PPDesk.Pages
             _logger = logger;
             _databaseService = databaseService;
             this.DataContext = settingViewModel;
+
             this.InitializeComponent();
+            LoadComponents();
+        }
+
+        private void LoadComponents()
+        {
+            try
+            {
+                var settingViewModel = (SettingViewModel)DataContext;
+                settingViewModel.LoadApiKey();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async void EventbrideButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var settingViewModel = (SettingViewModel)DataContext;
+                await settingViewModel.SaveApiKeyAsync();
+
+                DialogAsync("Salvataggio", "Salvataggio avvenuto correttamente.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async void DialogAsync(string title, string message)
+        {
+            var optionsDialog = new ContentDialog
+            {
+                Title = title,
+                Content = message,
+                CloseButtonText = "Ok",
+                XamlRoot = this.XamlRoot
+            };
+
+            await optionsDialog.ShowAsync();
         }
 
         private async void LoadDatabaseButton_Click(object sender, RoutedEventArgs e)
@@ -46,10 +90,9 @@ namespace PPDesk.Pages
             {
                 var optionsDialog = new ContentDialog
                 {
-                    Title = "Caricamento Database",
-                    Content = "Seleziona l'operazione da eseguire:",
-                    PrimaryButtonText = "Crea Solo Tabelle",
-                    SecondaryButtonText = "Carica Tutti i Dati",
+                    Title = "Database",
+                    Content = "Creare tabelle nel database",
+                    PrimaryButtonText = "Ok",
                     CloseButtonText = "Annulla",
                     XamlRoot = this.XamlRoot
                 };
@@ -60,10 +103,38 @@ namespace PPDesk.Pages
                 {
                     await ShowDatabaseCreationProgressAsync();
                 }
-                else if (result == ContentDialogResult.Secondary)
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async void LoadDataDatabaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var optionsDialog = new ContentDialog
                 {
-                    await ShowDatabaseCreationProgressAsync();
-                    await ShowDataLoadingProgressAsync();
+                    Title = "Database",
+                    Content = "Caricamento dati di Eventbride sul database",
+                    PrimaryButtonText = "Ok",
+                    CloseButtonText = "Annulla",
+                    XamlRoot = this.XamlRoot
+                };
+
+                var result = await optionsDialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
+                    {
+                        await ShowDataLoadingProgressAsync();
+                    }
+                    else
+                    {
+                        DialogAsync("Attenzione", "Database non ancora creato.");
+                    }
                 }
             }
             catch (Exception ex)
