@@ -55,39 +55,28 @@ namespace PPDesk
                 _isWindowLoaded = true;
                 this.Activated -= MainWindow_Activated; // Rimuovi l'event handler
 
+                LoadDatabaseAsync();
+                var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
+                ContentFrame.Content = tablesPage;
+
                 // Ora carica le configurazioni
-                var load = await LoadConfigurationsAsync();
-                if (load)
+                if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
                 {
-                    LoadDatabaseAsync();
-                    var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
-                    ContentFrame.Content = tablesPage;
+                    await LoadConfigurationsAsync();
                 }
             }
         }
 
-        private async Task<bool> LoadConfigurationsAsync()
+        private async Task LoadConfigurationsAsync()
         {
             try
             {
-                var scope = _serviceProvider.CreateScope();
-                _configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>()!;
-
-                var apikey = _configuration.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
-                SrvEApiKeyStorage.SetpiKeyStorage(apikey);
-                SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
-
-                var databaseConfiguration = _configuration.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
-                SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
-
-
-
-                return true;
+                var helperService = _serviceProvider.GetRequiredService<ISrvHelperService>();
+                await helperService.LoadConfigurationAsync();
             }
             catch (Exception ex)
             {
                 await ShowErrorAlertAsync(ex);
-                return false;
             }
         }
 

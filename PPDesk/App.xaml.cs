@@ -59,8 +59,6 @@ namespace PPDesk
             _host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((ctx, cfg) =>
                 {
-                    cfg.SetBasePath(AppContext.BaseDirectory)
-              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureServices((context, services) =>
                 {

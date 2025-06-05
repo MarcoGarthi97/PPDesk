@@ -10,6 +10,8 @@ namespace PPDesk.Service.Storages.Eventbride
         public static void SetpiKeyStorage(SrvEApiKey srvEApiKey)
         {
             Configuration = srvEApiKey;
+
+            SrvETokenStorage.SetBearer(srvEApiKey.PrivateToken);
         }
     }
 }

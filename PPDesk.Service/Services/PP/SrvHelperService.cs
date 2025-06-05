@@ -21,8 +21,12 @@ namespace PPDesk.Service.Services.PP
         Task LoadConfigurationAsync();
         Task LoadApiKeyEventbrideAsync();
         Task LoadDatabaseConfiguration();
-        Task InsertHelperAsync(IEnumerable<MdlHelper> helpers);
-        Task UpdateHelperAsync(IEnumerable<MdlHelper> helpers);
+        Task InsertHelperAsync(IEnumerable<SrvHelper> helpers);
+        Task UpdateHelperAsync(IEnumerable<SrvHelper> helpers);
+        Task InsertHelperAsync(SrvHelper helper);
+        Task UpdateHelperAsync(SrvHelper helper);
+        Task CreateTableHelpersAsync();
+        Task DeleteAllHelpersAsync();
     }
 
     public class SrvHelperService : ISrvHelperService
@@ -36,6 +40,11 @@ namespace PPDesk.Service.Services.PP
             _mapper = mapper;
         }
 
+        public async Task CreateTableHelpersAsync()
+        {
+            await _helperRepository.CreateTableHelpersAsync();
+        }
+
         public async Task LoadConfigurationAsync()
         {
             await LoadApiKeyEventbrideAsync();
@@ -45,7 +54,7 @@ namespace PPDesk.Service.Services.PP
         public async Task LoadApiKeyEventbrideAsync()
         {
             var helper = await _helperRepository.GetHelperByKeyAsync("EventbrideApiKey");
-            if(helper == null)
+            if(helper != null)
             {
                 var eventbrideApiKey = JsonSerializer.Deserialize<SrvEApiKey>(helper.Json);
 
@@ -56,24 +65,39 @@ namespace PPDesk.Service.Services.PP
         public async Task LoadDatabaseConfiguration()
         {
             var helper = await _helperRepository.GetHelperByKeyAsync("DatabaseConfiguration");
-            if (helper == null)
+            if (helper != null)
             {
-                var databaseConfiguration = JsonSerializer.Deserialize<SrvDatabaseConfiguration>(helper.Json);
+                var databaseConfiguration = JsonSerializer.Deserialize<SrvDatabaseConfigurationBySQL>(helper.Json);
 
                 SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
             }
         }
 
-        public async Task InsertHelperAsync(IEnumerable<MdlHelper> helpers)
+        public async Task InsertHelperAsync(SrvHelper helper)
+        {
+            await InsertHelperAsync(new List<SrvHelper> { helper });
+        }
+
+        public async Task InsertHelperAsync(IEnumerable<SrvHelper> helpers)
         {
             var mdlHelpers = _mapper.Map<IEnumerable<MdlHelper>>(helpers);
             await _helperRepository.InsertHelperAsync(mdlHelpers);
         }
 
-        public async Task UpdateHelperAsync(IEnumerable<MdlHelper> helpers)
+        public async Task UpdateHelperAsync(SrvHelper helper)
+        {
+            await UpdateHelperAsync(new List<SrvHelper> { helper });
+        }
+
+        public async Task UpdateHelperAsync(IEnumerable<SrvHelper> helpers)
         {
             var mdlHelpers = _mapper.Map<IEnumerable<MdlHelper>>(helpers);
             await _helperRepository.UpdateHelperAsync(mdlHelpers);
+        }
+
+        public async Task DeleteAllHelpersAsync()
+        {
+            await _helperRepository.DeleteAllHelpersAsync();
         }
     }
 }

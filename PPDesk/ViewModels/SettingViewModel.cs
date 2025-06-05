@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
+using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.Eventbride;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PPDesk.ViewModels
@@ -74,7 +76,7 @@ namespace PPDesk.ViewModels
             await _databaseService.CreateTablesAsync();
         }
 
-        public async Task LoadApiKeyAsync()
+        public void LoadApiKey()
         {
             var apiKey = SrvEApiKeyStorage.Configuration;
             if(apiKey != null)
@@ -91,7 +93,7 @@ namespace PPDesk.ViewModels
         {
             if(PrivateToken != null)
             {
-                var apiKey = new SrvEApiKey
+                SrvEApiKey apiKey = new SrvEApiKey
                 {
                     ApiKey = ApiKey,
                     ClientSecret = ClientSecret,
@@ -100,10 +102,22 @@ namespace PPDesk.ViewModels
                     RedirectUri = RedirectUri
                 };
 
-                if(SrvEApiKeyStorage.Configuration != null)
+                var helper = new SrvHelper
                 {
-                    //Fare inserimente e update
+                    Key = "EventbrideApiKey",
+                    Json = JsonSerializer.Serialize(apiKey)
+                };
+
+                if(SrvEApiKeyStorage.Configuration == null)
+                {
+                    await _helperService.InsertHelperAsync(helper);
                 }
+                else
+                {
+                    await _helperService.UpdateHelperAsync(helper);
+                }
+
+                SrvEApiKeyStorage.SetpiKeyStorage(apiKey);
             }
         }
     }

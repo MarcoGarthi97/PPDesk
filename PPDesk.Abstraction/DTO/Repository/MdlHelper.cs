@@ -6,9 +6,9 @@ namespace PPDesk.Abstraction.DTO.Repository
     [Table("HELPERS")]
     public class MdlHelper
     {
-        [Key]
         [Column("Id")]
         public int Id { get; set; }
+        [Key]
         [Column("Key")]
         public string Key { get; set; }
         [Column("Json")]

@@ -13,6 +13,8 @@ namespace PPDesk.Repository.Repositories
 {
     public interface IMdlHelperRepository : IForServiceCollectionExtension
     {
+        Task CreateTableHelpersAsync();
+        Task DeleteAllHelpersAsync();
         Task<MdlHelper> GetHelperByKeyAsync(string key);
         Task InsertHelperAsync(IEnumerable<MdlHelper> helpers);
         Task UpdateHelperAsync(IEnumerable<MdlHelper> helpers);
@@ -53,7 +55,21 @@ namespace PPDesk.Repository.Repositories
         public async Task UpdateHelperAsync(IEnumerable<MdlHelper> helpers)
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
-            await connection.BulkUpdateAsync(helpers);
+
+            const string updateSql = @"
+            UPDATE HELPERS 
+            SET Json = @Json 
+            WHERE Key = @Key";
+
+            await connection.ExecuteAsync(updateSql, helpers);
+        }
+
+        public async Task DeleteAllHelpersAsync()
+        {
+            var sql = "DELETE FROM HELPERS";
+            
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.QueryAsync(sql);
         }
     }
 }

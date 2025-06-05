@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using PPDesk.Service.Services.Eventbrite;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.PP
@@ -31,8 +33,9 @@ namespace PPDesk.Service.Services.PP
         private readonly ISrvTableService _tableService;
         private readonly ISrvOrderService _orderService;
         private readonly ISrvEventService _eventService;
+        private readonly ISrvHelperService _helperService;
 
-        public SrvDatabaseService(ISrvUserService userService, ISrvVersionService versionService, ISrvTableService tableService, ISrvEventService eventService, ISrvOrderService orderService, ISrvEOrganizationService eOrganizationService, ISrvEOrderService eOrderService, ISrvEEventService eEventService, ISrvETicketClassService eTicketClassService)
+        public SrvDatabaseService(ISrvUserService userService, ISrvVersionService versionService, ISrvTableService tableService, ISrvEventService eventService, ISrvOrderService orderService, ISrvEOrganizationService eOrganizationService, ISrvEOrderService eOrderService, ISrvEEventService eEventService, ISrvETicketClassService eTicketClassService, ISrvHelperService helperService)
         {
             _userService = userService;
             _versionService = versionService;
@@ -43,6 +46,7 @@ namespace PPDesk.Service.Services.PP
             _eOrderService = eOrderService;
             _eEventService = eEventService;
             _eTicketClassService = eTicketClassService;
+            _helperService = helperService;
         }
 
         public async Task CreateTablesAsync()
@@ -56,6 +60,7 @@ namespace PPDesk.Service.Services.PP
                 await _tableService.CreateTableTablesAsync();
                 await _orderService.CreateTableOrdersAsync();
                 await _eventService.CreateTableEventsAsync();
+                await _helperService.CreateTableHelpersAsync();
 
                 await _versionService.InsertVersionAsync();
             }
@@ -67,7 +72,7 @@ namespace PPDesk.Service.Services.PP
         {
             string version = await _versionService.GetVersionAsync();
 
-            SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists = !string.IsNullOrEmpty(version);
+            SrvAppConfigurationStorage.SetDatabaseExists(!string.IsNullOrEmpty(version));
         }
 
         public async Task LoadAllDataAsync()
@@ -119,6 +124,17 @@ namespace PPDesk.Service.Services.PP
 
                 progress?.Report("Creazione tabella Eventi...");
                 await _eventService.CreateTableEventsAsync();
+
+                progress?.Report("Creazione tabella Helpers...");
+                await _helperService.CreateTableHelpersAsync();
+
+                progress?.Report("Inserimento configurazione database iniziale...");
+                var helper = new SrvHelper
+                {
+                    Key = "DatabaseConfiguration",
+                    Json = JsonSerializer.Serialize(new SrvDatabaseConfigurationBySQL(true))
+                };
+                await _helperService.InsertHelperAsync(helper);
 
                 progress?.Report("Inserimento versione iniziale...");
                 await _versionService.InsertVersionAsync();
