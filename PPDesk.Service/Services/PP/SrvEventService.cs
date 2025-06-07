@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using PPDesk.Abstraction.DTO.Repository.Event;
+using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP.Event;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
@@ -26,6 +28,7 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvInformationEvent>> GetInformationEventsAsync(string name, EnumEventStatus? status, int page, int limit = 50);
         Task InsertEventsAsync(IEnumerable<SrvEvent> srvEvents);
         Task UpdateEventsAsync(IEnumerable<SrvEvent> srvEvents);
+        Task UpsertEventsAsync(IEnumerable<SrvEvent> srvEvents);
     }
 
     public class SrvEventService : ISrvEventService
@@ -87,6 +90,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlEvents = _mapper.Map<IEnumerable<MdlEvent>>(srvEvents);
             await _eventRepository.InsertEventsAsync(mdlEvents);
+        }
+
+        public async Task UpsertEventsAsync(IEnumerable<SrvEvent> srvEvents)
+        {
+            var mdlEvents = _mapper.Map<IEnumerable<MdlEvent>>(srvEvents);
+            await _eventRepository.UpsertEventsAsync(mdlEvents);
         }
 
         public async Task UpdateEventsAsync(IEnumerable<SrvEvent> srvEvents)

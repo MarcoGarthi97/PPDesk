@@ -5,7 +5,9 @@ using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Factory;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Z.Dapper.Plus;
@@ -23,6 +25,7 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationEvent>> GetInformationEventsAsync(string name, EnumEventStatus? status, int page, int limit);
         Task InsertEventsAsync(IEnumerable<MdlEvent> events);
         Task UpdateEventsAsync(IEnumerable<MdlEvent> events);
+        Task UpsertEventsAsync(IEnumerable<MdlEvent> events);
     }
 
     public class MdlEventRepository : BaseRepository<MdlEvent>, IMdlEventRepository
@@ -36,7 +39,7 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync($"CREATE TABLE EVENTS (" +
                 $"Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                $"IdEventbride BIGINT NOT NULL," +
+                $"IdEventbride BIGINT NOT NULL UNIQUE," +
                 $"OrganizationId BIGINT NOT NULL," +
                 $"Name VARCHAR(255) NOT NULL," +
                 $"Description VARCHAR(255)," +
@@ -157,6 +160,23 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(events);
+        }
+
+        public async Task UpsertEventsAsync(IEnumerable<MdlEvent> events)
+        {
+            const string upsertSql = @"
+        INSERT INTO EVENTS (IdEventbride, Name, Description, Start, End, OrganizationId, Created, Status) 
+        VALUES (@IdEventbride, @Name, @Description, @Start, @End, @OrganizationId, @Created, @Status)
+        ON CONFLICT(IdEventbride) DO UPDATE SET
+            Name = excluded.Name,
+            Description = excluded.Description,
+            Start = excluded.Start,
+            End = excluded.End,
+            OrganizationId = excluded.OrganizationId,
+            Status = excluded.Status";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, events);
         }
 
         public async Task UpdateEventsAsync(IEnumerable<MdlEvent> events)

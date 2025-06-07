@@ -5,6 +5,7 @@ using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Factory;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit);
         Task<IEnumerable<MdlOrder>> GetOrdersAsync(int page, int limit);
         Task InsertOrdersAsync(IEnumerable<MdlOrder> orders);
+        Task UpsertOrdersAsync(IEnumerable<MdlOrder> orders);
     }
 
     public class MdlOrderRepository : BaseRepository<MdlOrder>, IMdlOrderRepository
@@ -35,8 +37,8 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE ORDERS ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                IdEventbride BIGINT NOT NULL UNIQUE,
                 EventIdEventbride BIGINT NOT NULL,
-                IdEventbride BIGINT NOT NULL,
                 OrderIdEventbride BIGINT NOT NULL,
                 TableIdEventbride BIGINT NOT NULL,
                 Name NVARCHAR(255), 
@@ -173,6 +175,23 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(orders);
+        }
+
+        public async Task UpsertOrdersAsync(IEnumerable<MdlOrder> orders)
+        {
+            const string upsertSql = @"
+        INSERT INTO ORDERS (IdEventbride, EventIdEventbride, OrderIdEventbride, TableIdEventbride, Name, Created, Quantity, Cancelled) 
+        VALUES (@IdEventbride, @EventIdEventbride, @OrderIdEventbride, @TableIdEventbride, @Name, @Created, @Quantity, @Cancelled)
+        ON CONFLICT(IdEventbride) DO UPDATE SET
+            EventIdEventbride = excluded.EventIdEventbride,
+            OrderIdEventbride = excluded.OrderIdEventbride,
+            TableIdEventbride = excluded.TableIdEventbride,
+            Name = excluded.Name,
+            Quantity = excluded.Quantity,
+            Cancelled = excluded.Cancelled";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, orders);
         }
 
         public async Task DeleteAllOrdersAsync()

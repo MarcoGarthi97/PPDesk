@@ -37,6 +37,7 @@ using PPDesk.ViewModels;
 using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Service.Storages.PP;
 using PPDesk.Helper.Collection;
+using PPDesk.Service.BackgroundServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -92,6 +93,9 @@ namespace PPDesk
             services.AddSharedLibrary();
             services.AddSharedLibraryServices();
             services.AddSharedLibraryRepositories();
+
+            services.AddHostedService<SrvEUpdateLiveBackgroundService>();
+            services.AddHostedService<SrvEUpdateBackgroundService>();
 
             string dbPath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "app.db");
             var connectionString = $"Data Source={dbPath}";

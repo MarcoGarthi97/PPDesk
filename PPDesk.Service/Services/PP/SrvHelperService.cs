@@ -27,6 +27,7 @@ namespace PPDesk.Service.Services.PP
         Task UpdateHelperAsync(SrvHelper helper);
         Task CreateTableHelpersAsync();
         Task DeleteAllHelpersAsync();
+        Task LoadBackgroundServicesConfiguration();
     }
 
     public class SrvHelperService : ISrvHelperService
@@ -49,6 +50,7 @@ namespace PPDesk.Service.Services.PP
         {
             await LoadApiKeyEventbrideAsync();
             await LoadDatabaseConfiguration();
+            await LoadBackgroundServicesConfiguration();
         }
 
         public async Task LoadApiKeyEventbrideAsync()
@@ -70,6 +72,25 @@ namespace PPDesk.Service.Services.PP
                 var databaseConfiguration = JsonSerializer.Deserialize<SrvDatabaseConfigurationBySQL>(helper.Json);
 
                 SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
+            }
+        }
+
+        public async Task LoadBackgroundServicesConfiguration()
+        {
+            var helper = await _helperRepository.GetHelperByKeyAsync("LiveBackgroundService");
+            if (helper != null)
+            {
+                var backgroundServiceConfiguration = JsonSerializer.Deserialize<SrvBackgroundServiceConfiguration>(helper.Json);
+
+                SrvAppConfigurationStorage.SetLiveBackgroundServiceConfiguration(backgroundServiceConfiguration);
+            }
+
+            helper = await _helperRepository.GetHelperByKeyAsync("BackgroundService");
+            if (helper != null)
+            {
+                var backgroundServiceConfiguration = JsonSerializer.Deserialize<SrvBackgroundServiceConfiguration>(helper.Json);
+
+                SrvAppConfigurationStorage.SetBackgroundServiceConfiguration(backgroundServiceConfiguration);
             }
         }
 

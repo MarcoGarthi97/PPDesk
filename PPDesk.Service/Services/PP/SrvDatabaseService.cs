@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
@@ -15,11 +16,11 @@ namespace PPDesk.Service.Services.PP
 {
     public interface ISrvDatabaseService : IForServiceCollectionExtension
     {
-        Task CreateTablesAsync();
         Task CreateTablesAsync(IProgress<string> progress = null);
         Task LoadAllDataAsync();
         Task LoadAllDataAsync(IProgress<string> progress = null);
         Task LoadDatabaseExists();
+        Task UpdateLiveDataAsync();
     }
 
     public class SrvDatabaseService : ISrvDatabaseService
@@ -49,25 +50,6 @@ namespace PPDesk.Service.Services.PP
             _helperService = helperService;
         }
 
-        public async Task CreateTablesAsync()
-        {
-            string version = await _versionService.GetVersionAsync();
-
-            if(string.IsNullOrEmpty(version))
-            {
-                await _versionService.CreateTableVersionAsync();
-                await _userService.CreateTableUsersAsync();
-                await _tableService.CreateTableTablesAsync();
-                await _orderService.CreateTableOrdersAsync();
-                await _eventService.CreateTableEventsAsync();
-                await _helperService.CreateTableHelpersAsync();
-
-                await _versionService.InsertVersionAsync();
-            }
-
-            await LoadDatabaseExists();
-        }
-
         public async Task LoadDatabaseExists()
         {
             string version = await _versionService.GetVersionAsync();
@@ -77,30 +59,57 @@ namespace PPDesk.Service.Services.PP
 
         public async Task LoadAllDataAsync()
         {
-            await _userService.DeleteAllUsers();
-            await _eventService.DeleteAllEvents();
-            await _orderService.DeleteAllOrders();
-            await _tableService.DeleteAllTablesAsync();
-
             await _eOrganizationService.LoadOrganizationsAsync();
 
             var eOrders = await _eOrderService.GetListOrdersByOrganizationIdAsync();
 
             var users = _userService.GetUsersByEOrders(eOrders);
-            await _userService.InsertUsersAsync(users);
+            await _userService.UpsertUsersAsync(users);
 
             var orders = _orderService.GetOrdersByEOrders(eOrders);
-            await _orderService.InsertOrdersAsync(orders);
+            await _orderService.UpsertOrdersAsync(orders);
 
             var eEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
 
             var events = _eventService.GetEventsByEEvents(eEvents);
-            await _eventService.InsertEventsAsync(events);
+            await _eventService.UpsertEventsAsync(events);
 
             var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
 
             var tables = _tableService.GetTablesByETicketClasses(tickets);
-            await _tableService.InsertTablesAsync(tables);
+            await _tableService.UpsertTablesAsync(tables);
+        }
+
+        public async Task UpdateLiveDataAsync()
+        {
+            if (SrvAppConfigurationStorage.EOrganization == null)
+            {
+                await _eOrganizationService.LoadOrganizationsAsync();
+            }
+
+            IEnumerable<SrvEEvent> liveEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
+            liveEvents = liveEvents.Where(x => x.Status != "completed" && x.Status != "canceled");
+
+            foreach (var liveEvent in liveEvents)
+            {
+                var eOrders = await _eOrderService.GetListOrdersByEventIdAsync(liveEvent.Id);
+
+                var users = _userService.GetUsersByEOrders(eOrders);
+                await _userService.UpsertUsersAsync(users);
+
+                var orders = _orderService.GetOrdersByEOrders(eOrders);
+                await _orderService.UpsertOrdersAsync(orders);
+
+                var eEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
+
+                var events = _eventService.GetEventsByEEvents(eEvents);
+                await _eventService.UpsertEventsAsync(events);
+
+                var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
+
+                var tables = _tableService.GetTablesByETicketClasses(tickets);
+                await _tableService.UpsertTablesAsync(tables);
+            }
         }
 
         public async Task CreateTablesAsync(IProgress<string> progress = null)
@@ -129,12 +138,25 @@ namespace PPDesk.Service.Services.PP
                 await _helperService.CreateTableHelpersAsync();
 
                 progress?.Report("Inserimento configurazione database iniziale...");
-                var helper = new SrvHelper
+                var helpers = new List<SrvHelper>
                 {
-                    Key = "DatabaseConfiguration",
-                    Json = JsonSerializer.Serialize(new SrvDatabaseConfigurationBySQL(true))
+                    new SrvHelper
+                    {
+                        Key = "DatabaseConfiguration",
+                        Json = JsonSerializer.Serialize(new SrvDatabaseConfigurationBySQL(true))
+                    },
+                    new SrvHelper
+                    {
+                        Key = "LiveBackgroundService",
+                        Json = JsonSerializer.Serialize(new SrvBackgroundServiceConfiguration(10))
+                    },
+                    new SrvHelper
+                    {
+                        Key = "BackgroundService",
+                        Json = JsonSerializer.Serialize(new SrvBackgroundServiceConfiguration(60))
+                    }
                 };
-                await _helperService.InsertHelperAsync(helper);
+                await _helperService.InsertHelperAsync(helpers);
 
                 progress?.Report("Inserimento versione iniziale...");
                 await _versionService.InsertVersionAsync();
@@ -151,12 +173,6 @@ namespace PPDesk.Service.Services.PP
 
         public async Task LoadAllDataAsync(IProgress<string> progress = null)
         {
-            progress?.Report("Pulizia dati esistenti...");
-            await _userService.DeleteAllUsers();
-            await _eventService.DeleteAllEvents();
-            await _orderService.DeleteAllOrders();
-            await _tableService.DeleteAllTablesAsync();
-
             progress?.Report("Caricamento organizzazioni...");
             await _eOrganizationService.LoadOrganizationsAsync();
 
@@ -165,25 +181,25 @@ namespace PPDesk.Service.Services.PP
 
             progress?.Report("Elaborazione utenti...");
             var users = _userService.GetUsersByEOrders(eOrders);
-            await _userService.InsertUsersAsync(users);
+            await _userService.UpsertUsersAsync(users);
 
             progress?.Report("Elaborazione ordini...");
             var orders = _orderService.GetOrdersByEOrders(eOrders);
-            await _orderService.InsertOrdersAsync(orders);
+            await _orderService.UpsertOrdersAsync(orders);
 
             progress?.Report("Recupero eventi da Eventbrite...");
             var eEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
 
             progress?.Report("Elaborazione eventi...");
             var events = _eventService.GetEventsByEEvents(eEvents);
-            await _eventService.InsertEventsAsync(events);
+            await _eventService.UpsertEventsAsync(events);
 
             progress?.Report("Recupero biglietti...");
             var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
 
             progress?.Report("Elaborazione tabelle...");
             var tables = _tableService.GetTablesByETicketClasses(tickets);
-            await _tableService.InsertTablesAsync(tables);
+            await _tableService.UpsertTablesAsync(tables);
 
             progress?.Report("Caricamento dati completato!");
         }

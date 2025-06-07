@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PPDesk.Abstraction.Helper;
+using PPDesk.Service.BackgroundServices;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.PP;
 using PPDesk.ViewModels;
@@ -32,8 +33,10 @@ namespace PPDesk.Pages
         private readonly ILogger<SettingsPage> _logger;
 
         private readonly ISrvDatabaseService _databaseService;
+        private readonly ISrvEUpdateLiveBackgroundService _updateLiveBackgroundService;
+        private readonly ISrvEUpdateBackgroundService _updateBackgroundService;
 
-        public SettingsPage(SettingViewModel settingViewModel, ILogger<SettingsPage> logger, ISrvDatabaseService databaseService)
+        public SettingsPage(SettingViewModel settingViewModel, ILogger<SettingsPage> logger, ISrvDatabaseService databaseService, ISrvEUpdateLiveBackgroundService updateLiveBackgroundService, ISrvEUpdateBackgroundService updateBackgroundService)
         {
             _logger = logger;
             _databaseService = databaseService;
@@ -41,6 +44,8 @@ namespace PPDesk.Pages
 
             this.InitializeComponent();
             LoadComponents();
+            _updateLiveBackgroundService = updateLiveBackgroundService;
+            _updateBackgroundService = updateBackgroundService;
         }
 
         private void LoadComponents()
@@ -102,7 +107,22 @@ namespace PPDesk.Pages
                 if (result == ContentDialogResult.Primary)
                 {
                     await ShowDatabaseCreationProgressAsync();
+
+                    await StartBackgroundServiceAsync();
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async Task StartBackgroundServiceAsync()
+        {
+            try
+            {
+                await _updateLiveBackgroundService.StartUpdateAsync();
+                await _updateBackgroundService.StartUpdateAsync();
             }
             catch (Exception ex)
             {

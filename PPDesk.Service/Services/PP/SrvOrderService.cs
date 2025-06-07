@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using PPDesk.Abstraction.DTO.Repository.Order;
+using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
 using PPDesk.Abstraction.DTO.Service.PP.Order;
 using PPDesk.Abstraction.DTO.Service.PP.Order;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
@@ -25,6 +27,7 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvOrder>> GetOrdersAsync(int page, int limit = 50);
         IEnumerable<SrvOrder> GetOrdersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertOrdersAsync(IEnumerable<SrvOrder> srvOrders);
+        Task UpsertOrdersAsync(IEnumerable<SrvOrder> srvOrders);
     }
 
     public class SrvOrderService : ISrvOrderService
@@ -97,6 +100,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlOrders = _mapper.Map<IEnumerable<MdlOrder>>(srvOrders);
             await _orderRepository.InsertOrdersAsync(mdlOrders);
+        }
+
+        public async Task UpsertOrdersAsync(IEnumerable<SrvOrder> srvOrders)
+        {
+            var mdlOrders = _mapper.Map<IEnumerable<MdlOrder>>(srvOrders);
+            await _orderRepository.UpsertOrdersAsync(mdlOrders);
         }
 
         public async Task DeleteAllOrders()
