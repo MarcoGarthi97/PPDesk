@@ -34,10 +34,6 @@ namespace PPDesk.Service.BackgroundServices
             {
                 _logger.LogInformation("Start ExecuteAsync");
 
-#if DEBUG
-                //_updateInterval = TimeSpan.FromSeconds(5);
-#endif
-
                 using var timer = new PeriodicTimer(_updateInterval);
                 while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
                 {
