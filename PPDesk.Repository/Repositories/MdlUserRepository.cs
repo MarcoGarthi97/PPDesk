@@ -5,6 +5,7 @@ using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Factory;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationUser>> GetInformationUsersAsync(string name, string phone, string email, int page, int limit);
         Task<IEnumerable<MdlUser>> GetUsersAsync(string name, string phone, string email, int page, int limit);
         Task InsertUsersAsync(IEnumerable<MdlUser> users);
+        Task UpsertUsersAsync(IEnumerable<MdlUser> users);
     }
 
     public class MdlUserRepository : BaseRepository<MdlUser>, IMdlUserRepository
@@ -41,7 +43,7 @@ namespace PPDesk.Repository.Repositories
                 $"LastName VARCHAR(255)," +
                 $"Name VARCHAR(255) NOT NULL," +
                 $"CellPhone VARCHAR(25)," +
-                $"Email VARCHAR(255))");
+                $"Email VARCHAR(255) UNIQUE)");
         }
 
         public async Task<IEnumerable<MdlUser>> GetUsersAsync(string name, string phone, string email, int page, int limit)
@@ -172,6 +174,21 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(users);
+        }
+
+        public async Task UpsertUsersAsync(IEnumerable<MdlUser> users)
+        {
+            string upsertSql = @"
+        INSERT INTO Users (FirstName, LastName, CellPhone, Email, Name) 
+        VALUES (@FirstName, @LastName, @CellPhone, @Email, @Name)
+        ON CONFLICT(Email) DO UPDATE SET
+            FirstName = excluded.FirstName,
+            LastName = excluded.LastName,
+            CellPhone = excluded.CellPhone,
+            Name = excluded.Name";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, users);
         }
 
         public async Task DeleteAllUsersAsync()

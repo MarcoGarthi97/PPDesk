@@ -6,9 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -20,6 +22,7 @@ using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Pages;
+using PPDesk.Service.BackgroundServices;
 using PPDesk.Service.Services.Eventbrite;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Services.Window;
@@ -46,6 +49,28 @@ namespace PPDesk
 
             // Aspetta che la finestra sia completamente caricata
             this.Activated += MainWindow_Activated;
+
+        }
+
+        private async void StartBackgroundServiceAsync()
+        {
+            try
+            {
+                var hostService = _serviceProvider.GetRequiredService<IHostedService>();
+                if (hostService is SrvEUpdateLiveBackgroundService eUpdateLiveBackgroundService && SrvAppConfigurationStorage.LiveBackgroundServiceConfiguration != null)
+                {
+                    await eUpdateLiveBackgroundService.StartAsync(CancellationToken.None);
+                }
+
+                if (hostService is SrvEUpdateBackgroundService eUpdateBackgroundService && SrvAppConfigurationStorage.BackgroundServiceConfiguration != null)
+                {
+                    await eUpdateBackgroundService.StartAsync(CancellationToken.None);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
@@ -64,6 +89,8 @@ namespace PPDesk
                 {
                     await LoadConfigurationsAsync();
                 }
+
+                StartBackgroundServiceAsync();
             }
         }
 

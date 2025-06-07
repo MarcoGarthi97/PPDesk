@@ -24,6 +24,7 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvUser>> GetUsersAsync(string name, string phone, string email, int page, int limit = 50);
         IEnumerable<SrvUser> GetUsersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertUsersAsync(IEnumerable<SrvUser> srvUsers);
+        Task UpsertUsersAsync(IEnumerable<SrvUser> srvUsers);
     }
 
     public class SrvUserService : ISrvUserService
@@ -88,6 +89,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlUsers = _mapper.Map<IEnumerable<MdlUser>>(srvUsers);
             await _userRepository.InsertUsersAsync(mdlUsers);
+        }
+
+        public async Task UpsertUsersAsync(IEnumerable<SrvUser> srvUsers)
+        {
+            var mdlUsers = _mapper.Map<IEnumerable<MdlUser>>(srvUsers);
+            await _userRepository.UpsertUsersAsync(mdlUsers);
         }
 
         public async Task DeleteAllUsers()

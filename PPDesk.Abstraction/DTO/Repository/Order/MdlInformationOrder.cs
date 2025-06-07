@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PPDesk.Abstraction.DTO.Repository.Order
 {
-    [Table("ORDES")]
+    [Table("ORDERS")]
     public class MdlInformationOrder
     {
         [Key]

@@ -48,7 +48,7 @@
                 </Grid>
             </TabViewItem>
 
-            <TabViewItem Header="Eventbridge">
+            <TabViewItem Header="Eventbride">
                 <Grid Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

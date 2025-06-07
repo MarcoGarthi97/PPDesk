@@ -8,7 +8,9 @@ using PPDesk.Repository.Factory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -27,6 +29,7 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlTable>> GetAllTablesAsync();
         Task<IEnumerable<MdlInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit);
         Task InsertTablesAsync(IEnumerable<MdlTable> tables);
+        Task UpsertTablesAsync(IEnumerable<MdlTable> tables);
     }
 
     public class MdlTableRepository : BaseRepository<MdlTable>, IMdlTableRepository
@@ -40,8 +43,8 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE TABLES ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                IdEventbride BIGINT NOT NULL UNIQUE,
                 EventIdEventbride BIGINT NOT NULL,
-                IdEventbride BIGINT NOT NULL,
                 GdrName NVARCHAR(255), 
                 Description NVARCHAR(255),
                 Capacity SMALLINT NOT NULL,
@@ -58,6 +61,27 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(tables);
+        }
+
+        public async Task UpsertTablesAsync(IEnumerable<MdlTable> tables)
+        {
+            const string upsertSql = @"
+        INSERT INTO Tables (EventIdEventbride, IdEventbride, GdrName, Description, Capacity, QuantitySold, StartDate, EndDate, Master, Status, Type) 
+        VALUES (@EventIdEventbride, @IdEventbride, @GdrName, @Description, @Capacity, @QuantitySold, @StartDate, @EndDate, @Master, @Status, @Type)
+        ON CONFLICT(IdEventbride) DO UPDATE SET
+            EventIdEventbride = excluded.EventIdEventbride,
+            GdrName = excluded.GdrName,
+            Description = excluded.Description,
+            Capacity = excluded.Capacity,
+            QuantitySold = excluded.QuantitySold,
+            StartDate = excluded.StartDate,
+            EndDate = excluded.EndDate,
+            Master = excluded.Master,
+            Status = excluded.Status,
+            Type = excluded.Type";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, tables);
         }
 
         public async Task<IEnumerable<MdlTable>> GetAllTablesAsync()
