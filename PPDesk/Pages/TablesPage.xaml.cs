@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,6 +8,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Storages.PP;
 using PPDesk.ViewModels;
@@ -39,6 +41,35 @@ namespace PPDesk.Pages
             this.DataContext = tableViewModel;
 
             LoadComponents();
+        }
+
+        private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            try
+            {
+                if (e.Row.DataContext is SrvInformationTable table)
+                {
+                    _logger.LogInformation($"LoadingRow per table {table.Id}, AllUsersPresence: {table.AllUsersPresence}");
+
+                    if (table.AllUsersPresence)
+                    {
+                        e.Row.Background = new SolidColorBrush(Colors.Green);
+                        _logger.LogInformation($"Riga {table.Id} colorata di verde");
+                    }
+                    else
+                    {
+                        e.Row.Background = new SolidColorBrush(Colors.Transparent);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("DataContext non è di tipo SrvInformationTable");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore in LoadingRow");
+            }
         }
 
         private void LoadComponents()

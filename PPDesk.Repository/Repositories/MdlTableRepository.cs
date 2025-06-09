@@ -53,7 +53,8 @@ namespace PPDesk.Repository.Repositories
                 EndDate DATETIME NOT NULL,
                 Master NVARCHAR(255),
                 Status SMALLINT NOT NULL, 
-                Type SMALLINT NOT NULL
+                Type SMALLINT NOT NULL,
+                AllUsersPresence SMALLINT
                 )");
         }
 
@@ -106,11 +107,11 @@ namespace PPDesk.Repository.Repositories
             string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 
-            sql += "ORDER BY EventName ASC " +
+            sql += " ORDER BY EventName ASC " +
                 "LIMIT @limit OFFSET @offset;";
 
             var connection = await _connectionFactory.CreateConnectionAsync();
@@ -142,7 +143,7 @@ namespace PPDesk.Repository.Repositories
             string sql = @"SELECT COUNT(*)
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 

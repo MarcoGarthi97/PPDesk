@@ -45,5 +45,7 @@ namespace PPDesk.Abstraction.DTO.Repository.Table
         [Column("Type")]
         public EnumTableType Type { get; set; }
 
+        [Column("AllUsersPresence")]
+        public bool? AllUsersPresence { get; set; }
     }
 }

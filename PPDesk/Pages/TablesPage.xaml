@@ -16,6 +16,7 @@
         <converters:DateConverter x:Key="DateConverter"/>
         <converters:EnumEventStatusConverter x:Key="EnumEventStatusConverter"/>
         <converters:EnumTableTypeConverter x:Key="EnumTableTypeConverter"/>
+        <converters:PresenceStatusColorConverter x:Key="PresenceStatusColorConverter"/>
     </Page.Resources>
 
     <Grid Padding="20">
@@ -109,7 +110,8 @@
         AutoGenerateColumns="False"
         IsReadOnly="True"
         Margin="0,10,0,0"
-        Sorting="DataGrid_Sorting">
+        Sorting="DataGrid_Sorting"
+        LoadingRow="DataGrid_LoadingRow">
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="Name evento" Tag="EventName" Binding="{Binding EventName}" />
                 <controls:DataGridTextColumn Header="Stato evento" Tag="EventStatus" Binding="{Binding EventStatus, Converter={StaticResource EnumEventStatusConverter}}" />
