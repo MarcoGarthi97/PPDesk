@@ -225,7 +225,7 @@ namespace PPDesk.Pages
             var button = sender as Button;
             
             var order = (SrvInformationOrder)button!.Tag;
-            order.UserPresence = !order.UserPresence;
+            order.UserPresence = order.UserPresence == true ? false : true;
 
             var orderViewModel = (OrderViewModel)DataContext;
             await orderViewModel.CheckPresenceAsync(order);
