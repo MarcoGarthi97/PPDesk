@@ -7,6 +7,7 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
     {
         public int Id { get; set; }
         public long IdEventbride { get; set; }
+        public long TableIdEventbride { get; set; }
         public string Name { get; set; }
         public DateTime DateOrder { get; set; }
         public int Quantity { get; set; }
@@ -15,5 +16,6 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
         public EnumTableType TypeTable { get; set; }
         public string GdrName { get; set; }
         public string Master { get; set; }
+        public bool UserPresence { get; set; }
     }
 }

@@ -26,5 +26,7 @@ namespace PPDesk.Abstraction.DTO.Repository.Order
         public int Quantity { get; set; }
         [Column("Cancelled")]
         public bool Cancelled { get; set; }
+        [Column("UserPresence")]
+        public bool? UserPresence { get; set; }
     }
 }

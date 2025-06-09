@@ -13,5 +13,6 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
         public DateTime Created { get; set; }
         public int Quantity { get; set; }
         public bool Cancelled { get; set; }
+        public bool UserPresence { get; set; }
     }
 }

@@ -19,6 +19,7 @@ using PPDesk.Abstraction.DTO.UI;
 using PPDesk.ViewModels;
 using Windows.System;
 using PPDesk.Service.Storages.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Order;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -217,6 +218,17 @@ namespace PPDesk.Pages
             {
                 _logger.LogError(ex, ex.Message);
             }
+        }
+
+        private async void RowButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            
+            var order = (SrvInformationOrder)button!.Tag;
+            order.UserPresence = !order.UserPresence;
+
+            var orderViewModel = (OrderViewModel)DataContext;
+            await orderViewModel.CheckPresenceAsync(order);
         }
     }
 }

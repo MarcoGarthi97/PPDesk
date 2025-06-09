@@ -10,8 +10,8 @@ namespace PPDesk.Service.Mapper
         public SrvTableMapper()
         {
             CreateMap<SrvTable, MdlTable>().ReverseMap();
-            CreateMap<SrvInformationTable, MdlInformationTable>()
-                .ForMember(dest => dest.AllUsersPresence, opt => opt.MapFrom(src => src.AllUsersPresence == true));
+
+            CreateMap<SrvInformationTable, MdlInformationTable>();
 
             CreateMap<MdlInformationTable, SrvInformationTable>();
 
