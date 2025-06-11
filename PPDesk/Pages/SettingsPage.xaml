@@ -44,6 +44,13 @@
         Margin="10,0,10,0"
         MinWidth="80"
         HorizontalAlignment="Left" />
+
+        <TextBox
+            Grid.Column="2"
+            Text="{Binding DatabasePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            x:Name="DatabasePath"
+            Header="Posizione Database"
+            IsReadOnly="True"/>
                     </StackPanel>
                 </Grid>
             </TabViewItem>
