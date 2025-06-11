@@ -21,21 +21,21 @@ namespace PPDesk.Service.Builder.Table.Version
 
         public SrvTable TableByTickeClassBuilder(SrvETicketClass eTicketClass)
         {
-            SrvTable builder = new();
+            SrvTable builder = new SrvTable();
 
-            builder.GdrName = GdrNameBuilder(eTicketClass.Name);
+            builder.Type = TypeBuilder(eTicketClass.DisplayName);
+            builder.GdrName = GdrNameBuilder(eTicketClass.Name, builder.Type);
             builder.Description = DescriptionBuilder(eTicketClass.Description);
             builder.StartDate = StartDateBuilder(eTicketClass.Description, eTicketClass.SalesEnd);
             builder.EndDate = EndDateBuilder(eTicketClass.Description, eTicketClass.SalesEnd);
-            builder.Master = MasterBuilder(eTicketClass.Name);
-            builder.Type = TypeBuilder(eTicketClass.DisplayName);
+            builder.Master = MasterBuilder(eTicketClass.Name, builder.Type);
 
             return builder;
         }
 
         private EnumTableType TypeBuilder(string displayName)
         {
-            if(displayName.Contains("Multitavolo GDR"))
+            if (displayName.Contains("Multitavolo GDR"))
             {
                 return EnumTableType.Multitavolo;
             }
@@ -45,9 +45,9 @@ namespace PPDesk.Service.Builder.Table.Version
             }
         }
 
-        private string MasterBuilder(string name)
+        private string MasterBuilder(string name, EnumTableType type)
         {
-            return ExtractText(name, false);
+            return ExtractText(name, false, type);
         }
 
         private DateTime EndDateBuilder(string description, DateTime date)
@@ -67,14 +67,14 @@ namespace PPDesk.Service.Builder.Table.Version
                 var split = description.Split('\n');
                 string s = split[0];
 
-                if(s.Contains("0RE") || s.Contains("ORE"))
+                if (s.Contains("0RE") || s.Contains("ORE"))
                 {
                     s = s.Replace("0RE", "ORE");
                     s = s.Substring(s.IndexOf("ORE") + 3);
                 }
 
                 split = s.Split('-');
-                if(split.Length > 2)
+                if (split.Length > 2)
                 {
                     split = split.ToList().GetRange(split.Length - 2, 2).ToArray();
                 }
@@ -101,19 +101,26 @@ namespace PPDesk.Service.Builder.Table.Version
             return split[index + 1];
         }
 
-        private string GdrNameBuilder(string name)
+        private string GdrNameBuilder(string name, EnumTableType type)
         {
-            return ExtractText(name, true);
+            return ExtractText(name, true, type);
         }
 
-        private string ExtractText(string name, bool gdr)
+        private string ExtractText(string name, bool gdr, EnumTableType type)
         {
             string[] split = name.Split('-');
             string s = string.Empty;
 
-            if(split.Length > 1)
+            if (split.Length > 1)
             {
-                s = gdr ? split[1].Trim() : split[0].Trim();
+                if (type == EnumTableType.Multitavolo)
+                {
+                    s = gdr ? split[0].Trim() : "Peter Pan";
+                }
+                else
+                {
+                    s = gdr ? split[1].Trim() : split[0].Trim();
+                }
 
                 int end = 1000;
                 if (s.Contains("\"") && s.IndexOf("\"") < end)
@@ -134,7 +141,7 @@ namespace PPDesk.Service.Builder.Table.Version
             {
                 s = gdr ? s : split[0].Trim();
             }
-            
+
             return s;
         }
     }
