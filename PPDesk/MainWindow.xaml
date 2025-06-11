@@ -13,16 +13,18 @@
     <muxc:NavigationView
     x:Name="NavView"
     IsPaneOpen="False"
+    IsBackButtonVisible="Collapsed"
     PaneDisplayMode="Left"
-    IsBackButtonVisible="Visible"
+    IsSettingsVisible="False"
+    PaneTitle="PPDesk Menu"
     ItemInvoked="NavView_ItemInvoked">
 
         <muxc:NavigationView.MenuItems>
-            <muxc:NavigationViewItem Content="Tavoli" Icon="List" Tag="tablesPage"/>
+            <muxc:NavigationViewItem Content="Tavoli" Icon="View" Tag="tablesPage"/>
             <muxc:NavigationViewItem Content="Ordini" Icon="List"     Tag="ordersPage"/>
             <muxc:NavigationViewItem Content="Utenti" Icon="Contact"  Tag="usersPage"/>
-            <muxc:NavigationViewItem Content="Eventi"   Icon="Help"     Tag="eventsPage"/>
-            <muxc:NavigationViewItem Content="Settings"   Icon="Help"     Tag="settingsPage"/>
+            <muxc:NavigationViewItem Content="Eventi"   Icon="Calendar"     Tag="eventsPage"/>
+            <muxc:NavigationViewItem Content="Settings"   Icon="Setting"     Tag="settingsPage"/>
         </muxc:NavigationView.MenuItems>
 
         <Frame x:Name="ContentFrame">
