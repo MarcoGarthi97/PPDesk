@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PPDesk.Abstraction.DTO.Service.PP.Order;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
@@ -20,6 +21,7 @@ namespace PPDesk.ViewModels
     {
         private readonly ISrvOrderService _orderService;
         private readonly ISrvEventService _eventService;
+        private readonly ISrvTableService _tableService;
         private IEnumerable<SrvInformationOrder> _ordersList = new List<SrvInformationOrder>();
         private bool _loadFast;
         private string? _totalRecordsText;
@@ -103,10 +105,11 @@ namespace PPDesk.ViewModels
         public int _page = 0;
         public int _count = -1;
 
-        public OrderViewModel(ISrvOrderService orderService, ISrvEventService eventService)
+        public OrderViewModel(ISrvOrderService orderService, ISrvEventService eventService, ISrvTableService tableService)
         {
             _orderService = orderService;
             _eventService = eventService;
+            _tableService = tableService;
 
             LoadOrdersCommand = new AsyncRelayCommand(LoadOrdersAsync);
             _loadFast = SrvAppConfigurationStorage.DatabaseConfiguration.LoadFast;
@@ -302,6 +305,15 @@ namespace PPDesk.ViewModels
             ordersTemp = ordersTemp.Skip(skip).Take(50);
 
             BindGrid(ordersTemp);
+        }
+
+        public async Task CheckPresenceAsync(SrvInformationOrder order)
+        {
+            await _orderService.UpdateInformationOrderAsync(order);
+
+            SrvTable table = await _tableService.GetTableByIdEventbride(order.TableIdEventbride);
+            table.AllUsersPresence = await _orderService.CheckAllUsersPresenceAsync(order.TableIdEventbride);
+            await _tableService.UpdateTableAsync(table);
         }
     }
 }

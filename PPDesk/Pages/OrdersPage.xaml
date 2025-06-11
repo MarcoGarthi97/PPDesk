@@ -119,7 +119,8 @@ KeyDown="OnPageKeyDown" />
     AutoGenerateColumns="False"
     IsReadOnly="True"
     Margin="0,10,0,0"
-    Sorting="DataGrid_Sorting">
+    Sorting="DataGrid_Sorting"
+    LoadingRow="DataGrid_LoadingRow">
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="Name evento" Tag="EventName" Binding="{Binding EventName}" />
                 <controls:DataGridTextColumn Header="Stato evento" Tag="StatusEvent" Binding="{Binding StatusEvent, Converter={StaticResource EnumEventStatusConverter}}" />
@@ -129,6 +130,18 @@ KeyDown="OnPageKeyDown" />
                 <controls:DataGridTextColumn Header="Tipologia" Tag="TypeTable" Binding="{Binding TypeTable, Converter={StaticResource EnumTableTypeConverter }}" />
                 <controls:DataGridTextColumn Header="Posti prenotati" Tag="Quantity" Binding="{Binding Quantity}" />
                 <controls:DataGridTextColumn Header="Data ordine" Tag="DateOrder" Binding="{Binding DateOrder, Converter={StaticResource DateConverter}}" />
+
+                <controls:DataGridTemplateColumn Header="Azioni">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Presenza" 
+                                    Click="RowButton_Click"
+                                    Tag="{Binding}"
+                                    Margin="5"
+                                    MinWidth="80" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
 
             </controls:DataGrid.Columns>
         </controls:DataGrid>

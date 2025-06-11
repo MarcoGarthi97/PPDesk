@@ -33,6 +33,8 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit = 50);
         Task<IEnumerable<SrvInformationTable>> GetAllInformationTablesAsync();
         Task UpsertTablesAsync(IEnumerable<SrvTable> srvTables);
+        Task UpdateTableAsync(SrvTable srvTable);
+        Task<SrvTable> GetTableByIdEventbride(long idEventbride);
     }
 
     public class SrvTableService : ISrvTableService
@@ -90,10 +92,15 @@ namespace PPDesk.Service.Services.PP
             await _tableRepository.UpsertTablesAsync(mdlTables);
         }
 
+        public async Task<SrvTable> GetTableByIdEventbride(long idEventbride)
+        {
+            var mdlTables = await _tableRepository.GetTableByIdEventbride(idEventbride);
+            return _mapper.Map<SrvTable>(mdlTables);
+        }
+
         public async Task<IEnumerable<SrvTable>> GetAllTablesAsync()
         {
             var mdlTables = await _tableRepository.GetAllTablesAsync();
-
             return _mapper.Map<IEnumerable<SrvTable>>(mdlTables);
         }
 
@@ -122,6 +129,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlInformationsTable = await _tableRepository.GetAllInformationTablesAsync();
             return _mapper.Map<IEnumerable<SrvInformationTable>>(mdlInformationsTable);
+        }
+
+        public async Task UpdateTableAsync(SrvTable srvTable)
+        {
+            var mdlTable = _mapper.Map<MdlTable>(srvTable);
+            await _tableRepository.UpdateTableAsync(mdlTable);
         }
     }
 }

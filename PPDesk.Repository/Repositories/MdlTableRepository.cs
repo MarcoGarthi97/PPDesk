@@ -28,7 +28,9 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync();
         Task<IEnumerable<MdlTable>> GetAllTablesAsync();
         Task<IEnumerable<MdlInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit);
+        Task<MdlTable> GetTableByIdEventbride(long idEventbride);
         Task InsertTablesAsync(IEnumerable<MdlTable> tables);
+        Task UpdateTableAsync(MdlTable table);
         Task UpsertTablesAsync(IEnumerable<MdlTable> tables);
     }
 
@@ -53,7 +55,8 @@ namespace PPDesk.Repository.Repositories
                 EndDate DATETIME NOT NULL,
                 Master NVARCHAR(255),
                 Status SMALLINT NOT NULL, 
-                Type SMALLINT NOT NULL
+                Type SMALLINT NOT NULL,
+                AllUsersPresence SMALLINT
                 )");
         }
 
@@ -84,6 +87,17 @@ namespace PPDesk.Repository.Repositories
             await connection.ExecuteAsync(upsertSql, tables);
         }
 
+        public async Task<MdlTable> GetTableByIdEventbride(long idEventbride)
+        {
+            string sql = "SELECT * FROM TABLES WHERE IdEventbride = @IdEventbride";
+            var connection = await _connectionFactory.CreateConnectionAsync();
+
+            return await connection.QueryFirstAsync<MdlTable>(sql, new
+            {
+                IdEventbride = idEventbride,
+            });
+        }
+
         public async Task<IEnumerable<MdlTable>> GetAllTablesAsync()
         {
             string sql = "SELECT * FROM TABLES;";
@@ -106,11 +120,11 @@ namespace PPDesk.Repository.Repositories
             string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 
-            sql += "ORDER BY EventName ASC " +
+            sql += " ORDER BY EventName ASC " +
                 "LIMIT @limit OFFSET @offset;";
 
             var connection = await _connectionFactory.CreateConnectionAsync();
@@ -128,7 +142,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync()
         {
-            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
+            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType, t.AllUsersPresence
                 from TABLES t
                 join EVENTS e
                 on t.EventIdEventbride = e.IdEventbride ORDER BY EventName ASC";
@@ -142,7 +156,7 @@ namespace PPDesk.Repository.Repositories
             string sql = @"SELECT COUNT(*)
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 
@@ -197,6 +211,12 @@ namespace PPDesk.Repository.Repositories
                 sb.AppendLine("AND t.Type = @tableType");
             }
             return sb.ToString();
+        }
+
+        public async Task UpdateTableAsync(MdlTable table)
+        {
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.SingleUpdateAsync(table);
         }
     }
 }

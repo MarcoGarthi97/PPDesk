@@ -81,8 +81,6 @@ namespace PPDesk
                 this.Activated -= MainWindow_Activated; // Rimuovi l'event handler
 
                 LoadDatabaseAsync();
-                var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
-                ContentFrame.Content = tablesPage;
 
                 // Ora carica le configurazioni
                 if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
@@ -91,6 +89,9 @@ namespace PPDesk
                 }
 
                 StartBackgroundServiceAsync();
+
+                var tablesPage = _serviceProvider.GetRequiredService<TablesPage>();
+                ContentFrame.Content = tablesPage;
             }
         }
 

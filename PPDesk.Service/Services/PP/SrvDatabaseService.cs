@@ -158,6 +158,8 @@ namespace PPDesk.Service.Services.PP
                 };
                 await _helperService.InsertHelperAsync(helpers);
 
+                SrvAppConfigurationStorage.SetDatabaseConfigurations(new SrvDatabaseConfigurationBySQL(true));
+
                 progress?.Report("Inserimento versione iniziale...");
                 await _versionService.InsertVersionAsync();
 

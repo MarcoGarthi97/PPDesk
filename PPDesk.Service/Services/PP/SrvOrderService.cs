@@ -18,6 +18,7 @@ namespace PPDesk.Service.Services.PP
 {
     public interface ISrvOrderService : IForServiceCollectionExtension
     {
+        Task<bool> CheckAllUsersPresenceAsync(long tableIdEventbride);
         Task<int> CountAllInformationOrdersAsync();
         Task<int> CountInformationOrdersAsync(string name, string nameOrder, string gdrName, string master, EnumEventStatus? status, EnumTableType? type);
         Task CreateTableOrdersAsync();
@@ -27,6 +28,7 @@ namespace PPDesk.Service.Services.PP
         Task<IEnumerable<SrvOrder>> GetOrdersAsync(int page, int limit = 50);
         IEnumerable<SrvOrder> GetOrdersByEOrders(IEnumerable<SrvEOrder> eOrders);
         Task InsertOrdersAsync(IEnumerable<SrvOrder> srvOrders);
+        Task UpdateInformationOrderAsync(SrvInformationOrder srvOrder);
         Task UpsertOrdersAsync(IEnumerable<SrvOrder> srvOrders);
     }
 
@@ -106,6 +108,17 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlOrders = _mapper.Map<IEnumerable<MdlOrder>>(srvOrders);
             await _orderRepository.UpsertOrdersAsync(mdlOrders);
+        }
+
+        public async Task UpdateInformationOrderAsync(SrvInformationOrder srvOrder)
+        {
+            var mdlOrder = _mapper.Map<MdlInformationOrder>(srvOrder);
+            await _orderRepository.UpdateInformationOrderAsync(mdlOrder);
+        }
+
+        public async Task<bool> CheckAllUsersPresenceAsync(long tableIdEventbride)
+        {
+            return await _orderRepository.CheckAllUsersPresenceAsync(tableIdEventbride);
         }
 
         public async Task DeleteAllOrders()
