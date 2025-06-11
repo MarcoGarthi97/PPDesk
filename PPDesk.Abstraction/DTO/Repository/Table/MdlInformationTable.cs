@@ -41,5 +41,7 @@ namespace PPDesk.Abstraction.DTO.Repository.Table
 
         [Column("AllUsersPresence")]
         public bool? AllUsersPresence { get; set; }
+        [Column("Position")]
+        public string Position { get; set; }
     }
 }
