@@ -67,7 +67,6 @@ namespace PPDesk.Service.Services.Eventbrite
                     }
                 }
 
-
                 return srvEEvents;
             }
         }

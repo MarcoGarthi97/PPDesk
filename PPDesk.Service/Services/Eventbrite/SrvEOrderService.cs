@@ -18,6 +18,7 @@ namespace PPDesk.Service.Services.Eventbrite
 {
     public interface ISrvEOrderService : IForServiceCollectionExtension
     {
+        Task<IEnumerable<SrvEOrder>> GetListOrdersByEventIdAsync(long eventId);
         Task<IEnumerable<SrvEOrder>> GetListOrdersByOrganizationIdAsync();
     }
 
@@ -32,10 +33,20 @@ namespace PPDesk.Service.Services.Eventbrite
 
         public async Task<IEnumerable<SrvEOrder>> GetListOrdersByOrganizationIdAsync()
         {
+            long organizationId = SrvAppConfigurationStorage.EOrganization.Id;
+            return await GetListOrders($"organizations/{organizationId}");
+        }
+
+        public async Task<IEnumerable<SrvEOrder>> GetListOrdersByEventIdAsync(long eventId)
+        {
+            return await GetListOrders($"events/{eventId}");
+        }
+
+        private async Task<IEnumerable<SrvEOrder>> GetListOrders(string url)
+        {
             using (var listener = new HttpListener())
             {
                 string bearer = SrvETokenStorage.Bearer;
-                long organizationId = SrvAppConfigurationStorage.EOrganization.Id;
                 int pageNumber = 1;
                 bool hasMoreRecord = true;
 
@@ -45,7 +56,7 @@ namespace PPDesk.Service.Services.Eventbrite
 
                 while (hasMoreRecord)
                 {
-                    var request = new RestRequest($"organizations/{organizationId}/orders/?page={pageNumber}&expand=attendees");
+                    var request = new RestRequest($"{url}/orders/?page={pageNumber}&expand=attendees");
                     request.AddHeader("Authorization", $"Bearer {bearer}");
 
                     try

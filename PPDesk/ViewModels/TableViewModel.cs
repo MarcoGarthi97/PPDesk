@@ -305,5 +305,10 @@ namespace PPDesk.ViewModels
 
             BindGrid(tablesTemp);
         }
+
+        public async Task UpdateInformationTable(SrvInformationTable table)
+        {
+            await _tableService.UpdateInformationTableAsync(table);
+        }
     }
 }

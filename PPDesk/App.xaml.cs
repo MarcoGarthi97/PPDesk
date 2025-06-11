@@ -37,6 +37,7 @@ using PPDesk.ViewModels;
 using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Service.Storages.PP;
 using PPDesk.Helper.Collection;
+using PPDesk.Service.BackgroundServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -59,8 +60,6 @@ namespace PPDesk
             _host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((ctx, cfg) =>
                 {
-                    cfg.SetBasePath(AppContext.BaseDirectory)
-              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureServices((context, services) =>
                 {
@@ -95,6 +94,9 @@ namespace PPDesk
             services.AddSharedLibraryServices();
             services.AddSharedLibraryRepositories();
 
+            services.AddHostedService<SrvEUpdateLiveBackgroundService>();
+            services.AddHostedService<SrvEUpdateBackgroundService>();
+
             string dbPath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "app.db");
             var connectionString = $"Data Source={dbPath}";
             services.AddSingleton<IDatabaseConnectionFactory>(provider =>
@@ -105,12 +107,10 @@ namespace PPDesk
 
         private async Task InizializeDatabase()
         {
-            //C:\Users\marco\AppData\Local\Packages\dfcae022-bc71-4537-b546-539103578783_2jm902zmczqjy\LocalState
             var path = ApplicationData.Current.LocalFolder;
             await ApplicationData.Current.LocalFolder.CreateFileAsync("app.db", CreationCollisionOption.OpenIfExists);
 
-            var databaseService = _host.Services.GetRequiredService<ISrvDatabaseService>();
-            await databaseService.LoadDatabaseExists();
+            SrvAppConfigurationStorage.SetDatabasePath(path.Path);
 
             ConfigurationDatabase();
         }
@@ -122,12 +122,6 @@ namespace PPDesk
 
         private void LoadConfigurations(IConfiguration config)
         {
-            var apikey = config.GetSection("App:EventbriteApiKey").Get<SrvEApiKey>();
-            SrvEApiKeyStorage.SetpiKeyStorage(apikey);
-            SrvETokenStorage.SetBearer(SrvEApiKeyStorage.Configuration.PrivateToken);
-
-            var databaseConfiguration = config.GetSection("App:Database").Get<SrvDatabaseConfiguration>();
-            SrvAppConfigurationStorage.SetDatabaseConfigurations(databaseConfiguration);
         }
 
         private Window? m_window;

@@ -5,6 +5,7 @@ using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Factory;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace PPDesk.Repository.Repositories
 {
     public interface IMdlOrderRepository : IForServiceCollectionExtension
     {
+        Task<bool> CheckAllUsersPresenceAsync(long tableIdEventbride);
         Task<int> CountAllInformationOrdersAsync();
         Task<int> CountInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type);
         Task CreateTableOrdersAsync();
@@ -22,6 +24,8 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationOrder>> GetInformationOrdersAsync(string name, string eventName, string gdrName, string master, EnumEventStatus? status, EnumTableType? type, int page, int limit);
         Task<IEnumerable<MdlOrder>> GetOrdersAsync(int page, int limit);
         Task InsertOrdersAsync(IEnumerable<MdlOrder> orders);
+        Task UpdateInformationOrderAsync(MdlInformationOrder order);
+        Task UpsertOrdersAsync(IEnumerable<MdlOrder> orders);
     }
 
     public class MdlOrderRepository : BaseRepository<MdlOrder>, IMdlOrderRepository
@@ -35,14 +39,15 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE ORDERS ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                IdEventbride BIGINT NOT NULL UNIQUE,
                 EventIdEventbride BIGINT NOT NULL,
-                IdEventbride BIGINT NOT NULL,
                 OrderIdEventbride BIGINT NOT NULL,
                 TableIdEventbride BIGINT NOT NULL,
                 Name NVARCHAR(255), 
                 Quantity SMALLINT NOT NULL,
                 Created DATETIME NOT NULL, 
-                Cancelled SMALLINT NOT NULL
+                Cancelled SMALLINT NOT NULL,
+                UserPresence SMALLINT
                 )");
         }
 
@@ -50,7 +55,7 @@ namespace PPDesk.Repository.Repositories
         {
             int offset = page * limit;
 
-            string sql = @"SELECT O.Id, O.IdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
+            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable, O.UserPresence
                         from ORDERS O
                         JOIN EVENTS E
                         ON O.EventIdEventbride = E.IdEventbride
@@ -78,7 +83,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlInformationOrder>> GetAllInformationOrdersAsync()
         {
-            string sql = @"SELECT O.Id, O.IdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
+            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable, O.UserPresence
                         from ORDERS O
                         JOIN EVENTS E
                         ON O.EventIdEventbride = E.IdEventbride
@@ -173,6 +178,43 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(orders);
+        }
+
+        public async Task UpsertOrdersAsync(IEnumerable<MdlOrder> orders)
+        {
+            const string upsertSql = @"
+        INSERT INTO ORDERS (IdEventbride, EventIdEventbride, OrderIdEventbride, TableIdEventbride, Name, Created, Quantity, Cancelled) 
+        VALUES (@IdEventbride, @EventIdEventbride, @OrderIdEventbride, @TableIdEventbride, @Name, @Created, @Quantity, @Cancelled)
+        ON CONFLICT(IdEventbride) DO UPDATE SET
+            EventIdEventbride = excluded.EventIdEventbride,
+            OrderIdEventbride = excluded.OrderIdEventbride,
+            TableIdEventbride = excluded.TableIdEventbride,
+            Name = excluded.Name,
+            Quantity = excluded.Quantity,
+            Cancelled = excluded.Cancelled";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, orders);
+        }
+
+        public async Task UpdateInformationOrderAsync(MdlInformationOrder order)
+        {
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.SingleUpdateAsync(order);
+        }
+
+        public async Task<bool> CheckAllUsersPresenceAsync(long tableIdEventbride)
+        {
+            var sql = @"SELECT count(*) FROM ORDERS
+                        where TableIdEventbride = @tableIdEventbride and (UserPresence is null or UserPresence = 0)";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            var result = await connection.QueryFirstAsync<int>(sql, new
+            {
+                tableIdEventbride
+            });
+
+            return result == 0;
         }
 
         public async Task DeleteAllOrdersAsync()

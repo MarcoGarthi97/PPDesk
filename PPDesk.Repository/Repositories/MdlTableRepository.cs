@@ -8,7 +8,9 @@ using PPDesk.Repository.Factory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -26,7 +28,11 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync();
         Task<IEnumerable<MdlTable>> GetAllTablesAsync();
         Task<IEnumerable<MdlInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit);
+        Task<MdlTable> GetTableByIdEventbride(long idEventbride);
         Task InsertTablesAsync(IEnumerable<MdlTable> tables);
+        Task UpdateInformationTableAsync(MdlInformationTable table);
+        Task UpdateTableAsync(MdlTable table);
+        Task UpsertTablesAsync(IEnumerable<MdlTable> tables);
     }
 
     public class MdlTableRepository : BaseRepository<MdlTable>, IMdlTableRepository
@@ -40,8 +46,8 @@ namespace PPDesk.Repository.Repositories
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.QueryAsync(@$"CREATE TABLE TABLES ( 
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                IdEventbride BIGINT NOT NULL UNIQUE,
                 EventIdEventbride BIGINT NOT NULL,
-                IdEventbride BIGINT NOT NULL,
                 GdrName NVARCHAR(255), 
                 Description NVARCHAR(255),
                 Capacity SMALLINT NOT NULL,
@@ -50,7 +56,9 @@ namespace PPDesk.Repository.Repositories
                 EndDate DATETIME NOT NULL,
                 Master NVARCHAR(255),
                 Status SMALLINT NOT NULL, 
-                Type SMALLINT NOT NULL
+                Type SMALLINT NOT NULL,
+                AllUsersPresence SMALLINT,
+                Position NVARCHAR(255)
                 )");
         }
 
@@ -58,6 +66,38 @@ namespace PPDesk.Repository.Repositories
         {
             var connection = await _connectionFactory.CreateConnectionAsync();
             await connection.BulkInsertAsync(tables);
+        }
+
+        public async Task UpsertTablesAsync(IEnumerable<MdlTable> tables)
+        {
+            const string upsertSql = @"
+        INSERT INTO Tables (EventIdEventbride, IdEventbride, GdrName, Description, Capacity, QuantitySold, StartDate, EndDate, Master, Status, Type) 
+        VALUES (@EventIdEventbride, @IdEventbride, @GdrName, @Description, @Capacity, @QuantitySold, @StartDate, @EndDate, @Master, @Status, @Type)
+        ON CONFLICT(IdEventbride) DO UPDATE SET
+            EventIdEventbride = excluded.EventIdEventbride,
+            GdrName = excluded.GdrName,
+            Description = excluded.Description,
+            Capacity = excluded.Capacity,
+            QuantitySold = excluded.QuantitySold,
+            StartDate = excluded.StartDate,
+            EndDate = excluded.EndDate,
+            Master = excluded.Master,
+            Status = excluded.Status,
+            Type = excluded.Type";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.ExecuteAsync(upsertSql, tables);
+        }
+
+        public async Task<MdlTable> GetTableByIdEventbride(long idEventbride)
+        {
+            string sql = "SELECT * FROM TABLES WHERE IdEventbride = @IdEventbride";
+            var connection = await _connectionFactory.CreateConnectionAsync();
+
+            return await connection.QueryFirstAsync<MdlTable>(sql, new
+            {
+                IdEventbride = idEventbride,
+            });
         }
 
         public async Task<IEnumerable<MdlTable>> GetAllTablesAsync()
@@ -79,14 +119,14 @@ namespace PPDesk.Repository.Repositories
         public async Task<IEnumerable<MdlInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit)
         {
             int offset = page * limit;
-            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
+            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType, t.AllUsersPresence, t.Position
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 
-            sql += "ORDER BY EventName ASC " +
+            sql += " ORDER BY EventName ASC " +
                 "LIMIT @limit OFFSET @offset;";
 
             var connection = await _connectionFactory.CreateConnectionAsync();
@@ -104,7 +144,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync()
         {
-            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
+            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType, t.AllUsersPresence, t.Position
                 from TABLES t
                 join EVENTS e
                 on t.EventIdEventbride = e.IdEventbride ORDER BY EventName ASC";
@@ -118,7 +158,7 @@ namespace PPDesk.Repository.Repositories
             string sql = @"SELECT COUNT(*)
                 from TABLES t
                 join EVENTS e
-                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1";
+                on t.EventIdEventbride = e.IdEventbride WHERE 1 = 1 ";
 
             sql += WhereTables(eventName, gdrName, master, eventStatus, tableType);
 
@@ -173,6 +213,18 @@ namespace PPDesk.Repository.Repositories
                 sb.AppendLine("AND t.Type = @tableType");
             }
             return sb.ToString();
+        }
+
+        public async Task UpdateTableAsync(MdlTable table)
+        {
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.SingleUpdateAsync(table);
+        }
+
+        public async Task UpdateInformationTableAsync(MdlInformationTable table)
+        {
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            await connection.SingleUpdateAsync(table);
         }
     }
 }

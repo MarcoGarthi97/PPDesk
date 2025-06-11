@@ -12,31 +12,120 @@
 
 
     <Grid Padding="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <TabView>
+            <TabViewItem Header="Database">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <Grid Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,0,10" Spacing="5">
+                        <TextBlock 
+        Text="Crea le tabelle per il database"
+        Margin="10,0,10,0"
+        FontWeight="SemiBold" />
+                        <Button
+        Content="Crea tabelle"
+        Click="LoadDatabaseButton_Click"
+        Margin="10,0,10,0"
+        MinWidth="80"
+        HorizontalAlignment="Left" />
 
+                        <TextBlock 
+        Text="Carica i dati di Eventbride sul database"
+        Margin="10,10,10,0"
+        FontWeight="SemiBold" />
+                        <Button
+        Content="Carica dati"
+        Click="LoadDataDatabaseButton_Click"
+        Margin="10,0,10,0"
+        MinWidth="80"
+        HorizontalAlignment="Left" />
 
-            <Button
-Grid.Column="0"
-Content="Carica Database"
-Click="LoadDatabaseButton_Click"
-Margin="10,25,0,0"
-MinWidth="80"
-VerticalAlignment="Bottom" />
-        </Grid>
+        <TextBox
+            Grid.Column="2"
+            Text="{Binding DatabasePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            x:Name="DatabasePath"
+            Header="Posizione Database"
+            IsReadOnly="True"/>
+                    </StackPanel>
+                </Grid>
+            </TabViewItem>
+
+            <TabViewItem Header="Eventbride">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            Text="{Binding ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            x:Name="ApiKey"
+                            Header="ApiKey"
+                            PlaceholderText="Inserisci valore ApiKey"/>
+
+                        <TextBox
+                            Grid.Column="2"
+                            Text="{Binding ClientSecret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            x:Name="ClientSecret"
+                            Header="ClientSecret"
+                            PlaceholderText="Inserisci valore ClientSecret"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            Text="{Binding PrivateToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            x:Name="PrivateToken"
+                            Header="PrivateToken*"
+                            PlaceholderText="Inserisci valore PrivateToken (Obbligatorio)"/>
+
+                        <TextBox
+                            Grid.Column="2"
+                            Text="{Binding PublicToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            x:Name="PublicToken"
+                            Header="PublicToken"
+                            PlaceholderText="Inserisci valore PublicToken"/>
+                    </Grid>
+
+                    <TextBox
+                        Grid.Row="2"
+                        Text="{Binding RedirectUri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        x:Name="RedirectUri"
+                        Header="RedirectUri"
+                        PlaceholderText="Inserisci valore RedirectUri"
+                        Margin="0,0,0,10"/>
+
+                    <Button
+                        Grid.Row="3"
+                        Content="Salva"
+                        Click="EventbrideButton_Click"
+                        Margin="0,20,0,0"
+                        MinWidth="120"
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </TabViewItem>
+        </TabView>
     </Grid>
 </Page>

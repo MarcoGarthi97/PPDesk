@@ -1,4 +1,5 @@
 ﻿using PPDesk.Abstraction.DTO.Service.Eventbrite;
+using System;
 
 namespace PPDesk.Service.Storages.Eventbride
 {
@@ -9,6 +10,8 @@ namespace PPDesk.Service.Storages.Eventbride
         public static void SetpiKeyStorage(SrvEApiKey srvEApiKey)
         {
             Configuration = srvEApiKey;
+
+            SrvETokenStorage.SetBearer(srvEApiKey.PrivateToken);
         }
     }
 }

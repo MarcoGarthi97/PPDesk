@@ -10,7 +10,10 @@ namespace PPDesk.Service.Mapper
         public SrvTableMapper()
         {
             CreateMap<SrvTable, MdlTable>().ReverseMap();
-            CreateMap<SrvInformationTable, MdlInformationTable>().ReverseMap();
+
+            CreateMap<SrvInformationTable, MdlInformationTable>();
+
+            CreateMap<MdlInformationTable, SrvInformationTable>();
 
             CreateMap<SrvETicketClass, SrvTable>()
                 .ForMember(dest => dest.IdEventbride, opt => opt.MapFrom(from => from.Id))

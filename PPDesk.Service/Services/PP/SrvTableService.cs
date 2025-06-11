@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.UI.Xaml.Controls;
 using PPDesk.Abstraction.DTO.Repository.Table;
+using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP.Table;
+using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
@@ -30,6 +32,10 @@ namespace PPDesk.Service.Services.PP
         Task<int> CountInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType);
         Task<IEnumerable<SrvInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit = 50);
         Task<IEnumerable<SrvInformationTable>> GetAllInformationTablesAsync();
+        Task UpsertTablesAsync(IEnumerable<SrvTable> srvTables);
+        Task UpdateTableAsync(SrvTable srvTable);
+        Task<SrvTable> GetTableByIdEventbride(long idEventbride);
+        Task UpdateInformationTableAsync(SrvInformationTable srvTable);
     }
 
     public class SrvTableService : ISrvTableService
@@ -81,10 +87,21 @@ namespace PPDesk.Service.Services.PP
             await _tableRepository.InsertTablesAsync(mdlTables);
         }
 
+        public async Task UpsertTablesAsync(IEnumerable<SrvTable> srvTables)
+        {
+            var mdlTables = _mapper.Map<IEnumerable<MdlTable>>(srvTables);
+            await _tableRepository.UpsertTablesAsync(mdlTables);
+        }
+
+        public async Task<SrvTable> GetTableByIdEventbride(long idEventbride)
+        {
+            var mdlTables = await _tableRepository.GetTableByIdEventbride(idEventbride);
+            return _mapper.Map<SrvTable>(mdlTables);
+        }
+
         public async Task<IEnumerable<SrvTable>> GetAllTablesAsync()
         {
             var mdlTables = await _tableRepository.GetAllTablesAsync();
-
             return _mapper.Map<IEnumerable<SrvTable>>(mdlTables);
         }
 
@@ -113,6 +130,18 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlInformationsTable = await _tableRepository.GetAllInformationTablesAsync();
             return _mapper.Map<IEnumerable<SrvInformationTable>>(mdlInformationsTable);
+        }
+
+        public async Task UpdateTableAsync(SrvTable srvTable)
+        {
+            var mdlTable = _mapper.Map<MdlTable>(srvTable);
+            await _tableRepository.UpdateTableAsync(mdlTable);
+        }
+
+        public async Task UpdateInformationTableAsync(SrvInformationTable srvTable)
+        {
+            var mdlTable = _mapper.Map<MdlInformationTable>(srvTable);
+            await _tableRepository.UpdateInformationTableAsync(mdlTable);
         }
     }
 }

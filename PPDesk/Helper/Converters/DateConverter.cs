@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace PPDesk.Helper.Converters
 {
-
     public class DateConverter : HelperConverter, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

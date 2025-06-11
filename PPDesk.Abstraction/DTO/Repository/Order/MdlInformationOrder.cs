@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PPDesk.Abstraction.DTO.Repository.Order
 {
-    [Table("ORDES")]
+    [Table("ORDERS")]
     public class MdlInformationOrder
     {
         [Key]
@@ -13,6 +13,8 @@ namespace PPDesk.Abstraction.DTO.Repository.Order
         public int Id { get; set; }
         [Column("IdEventbride")]
         public long IdEventbride { get; set; }
+        [Column("TableIdEventbride")]
+        public long TableIdEventbride { get; set; }
         [Column("Name")]
         public string Name { get; set; }
         [Column("DateOrder")]
@@ -29,5 +31,7 @@ namespace PPDesk.Abstraction.DTO.Repository.Order
         public string GdrName { get; set; }
         [Column("Master")]
         public string Master { get; set; }
+        [Column("UserPresence")]
+        public bool? UserPresence { get; set; }
     }
 }
