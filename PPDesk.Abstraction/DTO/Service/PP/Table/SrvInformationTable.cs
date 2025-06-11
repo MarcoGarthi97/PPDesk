@@ -16,5 +16,6 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Table
         public string Master { get; set; }
         public EnumTableType TableType { get; set; }
         public bool AllUsersPresence { get; set; }
+        public string Position { get; set; }
     }
 }

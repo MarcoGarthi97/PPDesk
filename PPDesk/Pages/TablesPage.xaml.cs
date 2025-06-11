@@ -249,5 +249,19 @@ namespace PPDesk.Pages
                 _logger.LogError(ex, ex.Message);
             }
         }
+
+        private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if(textBox != null)
+            {
+                var table = (SrvInformationTable)textBox.DataContext;
+
+                var tableViewModel = (TableViewModel)DataContext;
+                await tableViewModel.UpdateInformationTable(table);
+
+                LoadTablesAsync();
+            }
+        }
     }
 }

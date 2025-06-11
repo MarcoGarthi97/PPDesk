@@ -122,6 +122,22 @@
                 <controls:DataGridTextColumn Header="Data fine" Tag="EndDate" Binding="{Binding EndDate, Converter={StaticResource DateConverter}}" />
                 <controls:DataGridTextColumn Header="Tipologia" Tag="TableType" Binding="{Binding TableType, Converter={StaticResource EnumTableTypeConverter }}" />
 
+                <controls:DataGridTemplateColumn Header="Posizione" Tag="Position" MinWidth="150">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Position, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     BorderThickness="0" 
+                                     Background="Transparent"
+                                     Padding="5"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Stretch"
+                                     AcceptsReturn="False"
+                                     TextWrapping="NoWrap"
+                                     LostFocus="TextBox_LostFocus" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
             </controls:DataGrid.Columns>
         </controls:DataGrid>
 

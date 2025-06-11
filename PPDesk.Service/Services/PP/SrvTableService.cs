@@ -35,6 +35,7 @@ namespace PPDesk.Service.Services.PP
         Task UpsertTablesAsync(IEnumerable<SrvTable> srvTables);
         Task UpdateTableAsync(SrvTable srvTable);
         Task<SrvTable> GetTableByIdEventbride(long idEventbride);
+        Task UpdateInformationTableAsync(SrvInformationTable srvTable);
     }
 
     public class SrvTableService : ISrvTableService
@@ -135,6 +136,12 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlTable = _mapper.Map<MdlTable>(srvTable);
             await _tableRepository.UpdateTableAsync(mdlTable);
+        }
+
+        public async Task UpdateInformationTableAsync(SrvInformationTable srvTable)
+        {
+            var mdlTable = _mapper.Map<MdlInformationTable>(srvTable);
+            await _tableRepository.UpdateInformationTableAsync(mdlTable);
         }
     }
 }

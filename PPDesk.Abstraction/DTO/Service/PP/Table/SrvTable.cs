@@ -18,5 +18,6 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Table
         public EnumTableStatus Status { get; set; }
         public EnumTableType Type { get; set; }
         public bool? AllUsersPresence { get; set; }
+        public string Position { get; set; }
     }
 }
