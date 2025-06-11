@@ -54,6 +54,7 @@ namespace PPDesk.Pages
             {
                 var settingViewModel = (SettingViewModel)DataContext;
                 settingViewModel.LoadApiKey();
+                settingViewModel.LoadDatabaseConfigurations();
             }
             catch (Exception ex)
             {

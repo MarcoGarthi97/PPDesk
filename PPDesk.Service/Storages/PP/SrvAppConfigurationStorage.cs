@@ -32,6 +32,12 @@ namespace PPDesk.Service.Storages.PP
             DatabaseConfiguration.DatabaseExists = exists;
         }
 
+        public static void SetDatabasePath(string path)
+        {
+            CreateSrvDatabaseConfiguration();
+            DatabaseConfiguration.Path = path;
+        }
+
         private static void CreateSrvDatabaseConfiguration()
         {
             if(DatabaseConfiguration == null)

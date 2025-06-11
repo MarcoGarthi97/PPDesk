@@ -107,9 +107,10 @@ namespace PPDesk
 
         private async Task InizializeDatabase()
         {
-            //C:\Users\marco\AppData\Local\Packages\dfcae022-bc71-4537-b546-539103578783_2jm902zmczqjy\LocalState
             var path = ApplicationData.Current.LocalFolder;
             await ApplicationData.Current.LocalFolder.CreateFileAsync("app.db", CreationCollisionOption.OpenIfExists);
+
+            SrvAppConfigurationStorage.SetDatabasePath(path.Path);
 
             ConfigurationDatabase();
         }

@@ -4,6 +4,7 @@ using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.Eventbride;
+using PPDesk.Service.Storages.PP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,17 @@ namespace PPDesk.ViewModels
         private string _privateToken;
         private string _publicToken;
         private string _redirectUri;
+
+        private string _databasePath;
+
+        public string? DatabasePath
+        {
+            get => _databasePath;
+            set
+            {
+                SetProperty(ref _databasePath!, value);
+            }
+        }
 
         public string? ApiKey
         {
@@ -65,6 +77,7 @@ namespace PPDesk.ViewModels
             }
         }
 
+
         public SettingViewModel(ISrvDatabaseService databaseService, ISrvHelperService helperService)
         {
             _databaseService = databaseService;
@@ -74,6 +87,15 @@ namespace PPDesk.ViewModels
         public async Task CreateDatabaseAsync()
         {
             await _databaseService.CreateTablesAsync();
+        }
+
+        public void LoadDatabaseConfigurations()
+        {
+            var databaseConfiguration = SrvAppConfigurationStorage.DatabaseConfiguration;
+            if(databaseConfiguration != null)
+            {
+                DatabasePath = databaseConfiguration.Path;
+            }
         }
 
         public void LoadApiKey()
