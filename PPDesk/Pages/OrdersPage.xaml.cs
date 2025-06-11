@@ -48,9 +48,9 @@ namespace PPDesk.Pages
         {
             if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
             {
+                InitializeComboBoxesAsync();
                 OrdersCountAsync();
                 LoadOrdersAsync();
-                InitializeComboBoxesAsync();
             }
             else
             {

@@ -55,6 +55,7 @@ namespace PPDesk.Pages
                 var settingViewModel = (SettingViewModel)DataContext;
                 settingViewModel.LoadApiKey();
                 settingViewModel.LoadDatabaseConfigurations();
+                settingViewModel.LoadLiveEventDefault();
             }
             catch (Exception ex)
             {
@@ -314,7 +315,22 @@ namespace PPDesk.Pages
             // Assicurati che l'operazione sia completata prima di continuare
             await databaseTask;
         }
-    
+
+        private void MyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+                if (toggleSwitch != null)
+                {
+                    SrvAppConfigurationStorage.SetEventLiveDefault(toggleSwitch.IsOn);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
     }
 
 }

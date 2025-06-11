@@ -13,6 +13,25 @@
 
     <Grid Padding="20">
         <TabView>
+            <TabViewItem Header="Applicazione">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ToggleSwitch x:Name="ToggleSwitch" 
+                  Header="Eventi live come default"
+                  OnContent="Attivo" 
+                  OffContent="Disattivo"
+                  Toggled="MyToggleSwitch_Toggled"
+                  IsOn="{Binding IsLiveEventDefault, Mode=TwoWay}"/>
+                    <StackPanel Margin="0,0,0,10" Spacing="5">
+                        
+                    </StackPanel>
+                </Grid>
+            </TabViewItem>
             <TabViewItem Header="Database">
                 <Grid>
                     <Grid.RowDefinitions>

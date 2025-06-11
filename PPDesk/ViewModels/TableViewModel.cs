@@ -153,6 +153,11 @@ namespace PPDesk.ViewModels
 
             ListStatusEvents.Clear();
             statusEvents.ForEach(x => ListStatusEvents.Add(x));
+
+            if (SrvAppConfigurationStorage.EventLiveDefault)
+            {
+                SelectedStatusEvent = ListStatusEvents.FirstOrDefault(x => x.Id == 1);
+            }
         }
 
         private void InitializeComboBoxTypeTable()

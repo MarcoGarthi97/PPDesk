@@ -27,6 +27,14 @@ namespace PPDesk.ViewModels
 
         private string _databasePath;
 
+        private bool _isLiveEventDefault = false;
+
+        public bool IsLiveEventDefault
+        {
+            get => _isLiveEventDefault;
+            set => SetProperty(ref _isLiveEventDefault, value);
+        }
+
         public string? DatabasePath
         {
             get => _databasePath;
@@ -87,6 +95,11 @@ namespace PPDesk.ViewModels
         public async Task CreateDatabaseAsync()
         {
             await _databaseService.CreateTablesAsync();
+        }
+
+        public void LoadLiveEventDefault()
+        {
+            IsLiveEventDefault = SrvAppConfigurationStorage.EventLiveDefault;
         }
 
         public void LoadDatabaseConfigurations()

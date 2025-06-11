@@ -14,6 +14,7 @@ namespace PPDesk.Service.Storages.PP
         public static SrvDatabaseConfiguration DatabaseConfiguration { get; private set; }
         public static SrvBackgroundServiceConfiguration LiveBackgroundServiceConfiguration { get; private set; }
         public static SrvBackgroundServiceConfiguration BackgroundServiceConfiguration { get; private set; }
+        public static bool EventLiveDefault { get; private set; }
 
         public static void SetOrganization(SrvEOrganization eOrganization)
         {
@@ -54,6 +55,11 @@ namespace PPDesk.Service.Storages.PP
         public static void SetBackgroundServiceConfiguration(SrvBackgroundServiceConfiguration srvBackgroundServiceConfiguration)
         {
             BackgroundServiceConfiguration = srvBackgroundServiceConfiguration;
+        }
+
+        public static void SetEventLiveDefault(bool isDefault)
+        {
+            EventLiveDefault = isDefault;
         }
     }
 }
