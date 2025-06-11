@@ -76,9 +76,9 @@ namespace PPDesk.Pages
         {
             if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
             {
+                InitializeComboBoxesAsync();
                 TablesCountAsync();
                 LoadTablesAsync();
-                InitializeComboBoxesAsync();
             }
             else
             {
