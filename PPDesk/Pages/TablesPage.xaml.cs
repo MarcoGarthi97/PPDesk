@@ -45,8 +45,6 @@ namespace PPDesk.Pages
 
         private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            // Controllare il giro perché anche con AllUsersPresence a true lui lo legge a false
-            // Cercare il table con nome gdr = ???
             try
             {
                 if (e.Row.DataContext is SrvInformationTable table)

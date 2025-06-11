@@ -16,7 +16,6 @@
         <converters:DateConverter x:Key="DateConverter"/>
         <converters:EnumEventStatusConverter x:Key="EnumEventStatusConverter"/>
         <converters:EnumTableTypeConverter x:Key="EnumTableTypeConverter"/>
-        <converters:PresenceStatusColorConverter x:Key="PresenceStatusColorConverter"/>
     </Page.Resources>
 
     <Grid Padding="20">

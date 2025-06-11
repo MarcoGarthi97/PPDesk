@@ -55,7 +55,7 @@ namespace PPDesk.Repository.Repositories
         {
             int offset = page * limit;
 
-            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
+            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable, O.UserPresence
                         from ORDERS O
                         JOIN EVENTS E
                         ON O.EventIdEventbride = E.IdEventbride
@@ -83,7 +83,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlInformationOrder>> GetAllInformationOrdersAsync()
         {
-            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable
+            string sql = @"SELECT O.Id, O.IdEventbride, O.TableIdEventbride, O.Name, O.Quantity, O.Created AS DateOrder, E.Name AS EventName, E.Status AS StatusEvent, T.GdrName AS GdrName, T.Master, T.Type as TypeTable, O.UserPresence
                         from ORDERS O
                         JOIN EVENTS E
                         ON O.EventIdEventbride = E.IdEventbride

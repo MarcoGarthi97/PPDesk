@@ -142,7 +142,7 @@ namespace PPDesk.Repository.Repositories
 
         public async Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync()
         {
-            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType
+            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType, t.AllUsersPresence
                 from TABLES t
                 join EVENTS e
                 on t.EventIdEventbride = e.IdEventbride ORDER BY EventName ASC";

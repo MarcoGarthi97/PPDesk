@@ -20,6 +20,8 @@ using PPDesk.ViewModels;
 using Windows.System;
 using PPDesk.Service.Storages.PP;
 using PPDesk.Abstraction.DTO.Service.PP.Order;
+using Microsoft.UI;
+using PPDesk.Abstraction.DTO.Service.PP.Table;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -222,13 +224,66 @@ namespace PPDesk.Pages
 
         private async void RowButton_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            
-            var order = (SrvInformationOrder)button!.Tag;
-            order.UserPresence = order.UserPresence == true ? false : true;
+            try
+            {
+                var button = sender as Button;
 
-            var orderViewModel = (OrderViewModel)DataContext;
-            await orderViewModel.CheckPresenceAsync(order);
+                var order = (SrvInformationOrder)button!.Tag;
+                order.UserPresence = order.UserPresence == true ? false : true;
+
+                var orderViewModel = (OrderViewModel)DataContext;
+                await orderViewModel.CheckPresenceAsync(order);
+
+                LoadOrdersAsync();
+
+                MessageBoxAsync("Presenza", "La presenza è stata impostata correttamente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            try
+            {
+                if (e.Row.DataContext is SrvInformationOrder order)
+                {
+                    _logger.LogInformation($"LoadingRow per table {order.Id}, AllUsersPresence: {order.UserPresence}");
+
+                    if (order.UserPresence)
+                    {
+                        e.Row.Background = new SolidColorBrush(Colors.Green);
+                        _logger.LogInformation($"Riga {order.Id} colorata di verde");
+                    }
+                    else
+                    {
+                        e.Row.Background = new SolidColorBrush(Colors.Transparent);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("DataContext non è di tipo SrvInformationTable");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore in LoadingRow");
+            }
+        }
+
+        private async void MessageBoxAsync(string title, string message)
+        {
+            var optionsDialog = new ContentDialog
+            {
+                Title = title,
+                Content = message,
+                PrimaryButtonText = "Ok",
+                XamlRoot = this.XamlRoot
+            };
+
+            await optionsDialog.ShowAsync();
         }
     }
 }
