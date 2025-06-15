@@ -35,6 +35,13 @@ The app retrieves event and order data from Eventbrite, processes it, and stores
 - **Eventbrite API** for external data retrieval
 - **Background Services** for automatic sync
 
+## ❤️ Special Thanks
+
+This project was created with love and dedication for the [**Associazione Ludico Culturale Peter Pan**](https://linktr.ee/peterpancdc), a passionate group of volunteers committed to spreading the joy of tabletop role-playing games.
+
+May this tool help make your events smoother, your tables better organized, and your stories even more epic.
+
+
 > **Note**: This application is designed for internal use by the Peter Pan association during GDR events. Make sure you have the proper credentials and access rights to Eventbrite.
 
 ## 📦 Data Flow Overview
