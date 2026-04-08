@@ -22,8 +22,9 @@ namespace PPDesk.Service.Builder.Table
         private readonly ISrvTableBuilderV6 _tableBuilderV6;
         private readonly ISrvTableBuilderV7 _tableBuilderV7;
         private readonly ISrvTableBuilderV8 _tableBuilderV8;
+        private readonly ISrvTableBuilderV9 _tableBuilderV9;
 
-        public SrvTableOrchestratorBuilder(ISrvTableBuilderV1 tableBuilderV1, ISrvTableBuilderV2 tableBuilderV2, ISrvTableBuilderV3 tableBuilderV3, ISrvTableBuilderV4 tableBuilderV4, ISrvTableBuilderV5 tableBuilderV5, ISrvTableBuilderV6 tableBuilderV6, ISrvTableBuilderV7 tableBuilderV7, ISrvTableBuilderV8 tableBuilderV8)
+        public SrvTableOrchestratorBuilder(ISrvTableBuilderV1 tableBuilderV1, ISrvTableBuilderV2 tableBuilderV2, ISrvTableBuilderV3 tableBuilderV3, ISrvTableBuilderV4 tableBuilderV4, ISrvTableBuilderV5 tableBuilderV5, ISrvTableBuilderV6 tableBuilderV6, ISrvTableBuilderV7 tableBuilderV7, ISrvTableBuilderV8 tableBuilderV8, ISrvTableBuilderV9 tableBuilderV9)
         {
             _tableBuilderV1 = tableBuilderV1;
             _tableBuilderV2 = tableBuilderV2;
@@ -33,14 +34,13 @@ namespace PPDesk.Service.Builder.Table
             _tableBuilderV6 = tableBuilderV6;
             _tableBuilderV7 = tableBuilderV7;
             _tableBuilderV8 = tableBuilderV8;
+            _tableBuilderV9 = tableBuilderV9;
         }
 
         public SrvTable TableByTickeClassBuilder(SrvETicketClass ticketClasse)
         {
             switch (ticketClasse.EventId)
             {
-                case "369202503627":
-                    return _tableBuilderV1.TableByTickeClassBuilder(ticketClasse);
                 case "432016923247":
                     return _tableBuilderV2.TableByTickeClassBuilder(ticketClasse);
                 case "616489525767":
@@ -59,6 +59,8 @@ namespace PPDesk.Service.Builder.Table
                     return _tableBuilderV7.TableByTickeClassBuilder(ticketClasse);
                 case "1312805258869":
                     return _tableBuilderV8.TableByTickeClassBuilder(ticketClasse);
+                case "1986527360812":
+                    return _tableBuilderV9.TableByTickeClassBuilder(ticketClasse);
                 default:
                     return _tableBuilderV1.TableByTickeClassBuilder(ticketClasse);
             }

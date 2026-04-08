@@ -5,6 +5,7 @@ using PPDesk.Abstraction.DTO.Service.PP.Table;
 using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
+using PPDesk.Helper.Converters;
 using PPDesk.Service.Services.PP;
 using PPDesk.Service.Storages.PP;
 using System;
@@ -171,14 +172,14 @@ namespace PPDesk.ViewModels
 
         private void InitializeComboBoxTypeTable()
         {
-            var typeTables = new List<ComboBoxTypeTableUI>
-            {
-                new ComboBoxTypeTableUI(0, "Sessione Gdr"),
-                new ComboBoxTypeTableUI(1, "Multi Tavolo")
-            };
+            var converter = new EnumTableTypeConverter();
 
             ListTypeTables.Clear();
-            typeTables.ForEach(x => ListTypeTables.Add(x));
+            foreach (var type in Enum.GetValues<EnumTableType>())
+            {
+                var label = (string)converter.Convert(type, typeof(string), null!, string.Empty);
+                ListTypeTables.Add(new ComboBoxTypeTableUI((int)type, label));
+            }
         }
 
         public async Task<IEnumerable<SrvInformationOrder>> FilterOrdersAsync()
