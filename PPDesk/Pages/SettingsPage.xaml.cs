@@ -316,6 +316,102 @@ namespace PPDesk.Pages
             await databaseTask;
         }
 
+        private async void UpdateLiveDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var optionsDialog = new ContentDialog
+                {
+                    Title = "Aggiorna eventi live",
+                    Content = "Aggiornare i dati degli eventi non ancora conclusi",
+                    PrimaryButtonText = "Ok",
+                    CloseButtonText = "Annulla",
+                    XamlRoot = this.XamlRoot
+                };
+
+                var result = await optionsDialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
+                    {
+                        await ShowUpdateLiveDataProgressAsync();
+                    }
+                    else
+                    {
+                        DialogAsync("Attenzione", "Database non ancora creato.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async Task ShowUpdateLiveDataProgressAsync()
+        {
+            var progressDialog = new ContentDialog
+            {
+                Title = "Aggiornamento eventi live",
+                CloseButtonText = null,
+                XamlRoot = this.XamlRoot
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Spacing = 15,
+                Margin = new Thickness(20)
+            };
+
+            var statusText = new TextBlock
+            {
+                Text = "Aggiornamento in corso...",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 14
+            };
+
+            var progressBar = new ProgressBar
+            {
+                IsIndeterminate = true,
+                Width = 300
+            };
+
+            stackPanel.Children.Add(statusText);
+            stackPanel.Children.Add(progressBar);
+
+            progressDialog.Content = stackPanel;
+
+            var updateTask = Task.Run(async () =>
+            {
+                try
+                {
+                    await _databaseService.UpdateLiveDataAsync();
+
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        statusText.Text = "Aggiornamento completato!";
+                        progressBar.IsIndeterminate = false;
+                        progressBar.Value = 100;
+                        progressDialog.CloseButtonText = "OK";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        statusText.Text = $"Errore nell'aggiornamento: {ex.Message}";
+                        progressBar.IsIndeterminate = false;
+                        progressDialog.CloseButtonText = "Chiudi";
+                    });
+                }
+            });
+
+            await progressDialog.ShowAsync();
+
+            await updateTask;
+        }
+
         private void MyToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             try

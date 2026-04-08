@@ -67,5 +67,3 @@ flowchart TD
     C --> D2
     C --> D3
     C --> D4
-
-

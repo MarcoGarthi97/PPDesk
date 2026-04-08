@@ -14,6 +14,7 @@ namespace PPDesk.Helper.Converters
                 {
                     EnumTableType.SessioneGdr => "Sessione Gdr",
                     EnumTableType.Multitavolo => "Multi Tavolo",
+                    EnumTableType.LaboratorioCreativo => "Laboratorio Creativo",
                     _ => type.ToString()
                 };
             }

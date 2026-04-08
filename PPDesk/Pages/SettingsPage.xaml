@@ -64,6 +64,17 @@
         MinWidth="80"
         HorizontalAlignment="Left" />
 
+                        <TextBlock 
+        Text="Aggiorna i dati degli eventi non ancora conclusi"
+        Margin="10,10,10,0"
+        FontWeight="SemiBold" />
+                        <Button
+        Content="Aggiorna eventi live"
+        Click="UpdateLiveDataButton_Click"
+        Margin="10,0,10,0"
+        MinWidth="80"
+        HorizontalAlignment="Left" />
+
         <TextBox
             Grid.Column="2"
             Text="{Binding DatabasePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
