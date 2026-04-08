@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using PPDesk.Abstraction.DTO.Repository.Event;
-using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP.Event;
-using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.DTO.UI;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.PP
