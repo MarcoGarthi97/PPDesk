@@ -1,13 +1,9 @@
 ﻿using Dapper;
 using PPDesk.Abstraction.DTO.Repository.Event;
-using PPDesk.Abstraction.DTO.Service.PP;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Factory;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Diagnostics.Metrics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Z.Dapper.Plus;

@@ -1,22 +1,13 @@
 ﻿using AutoMapper;
-using Microsoft.UI.Xaml.Controls;
 using PPDesk.Abstraction.DTO.Repository.Table;
-using PPDesk.Abstraction.DTO.Repository.User;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP.Table;
-using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
-using PPDesk.Service.Builder;
 using PPDesk.Service.Builder.Table;
-using PPDesk.Service.Services.Eventbrite;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.PP

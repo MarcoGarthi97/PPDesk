@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using PPDesk.Abstraction.DTO.Service.Eventbrite;
 using PPDesk.Abstraction.DTO.Service.PP;
+using PPDesk.Abstraction.DTO.Service.PP.Event;
+using PPDesk.Abstraction.Enum;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
 using PPDesk.Service.Services.Eventbrite;
@@ -87,10 +89,23 @@ namespace PPDesk.Service.Services.PP
                 await _eOrganizationService.LoadOrganizationsAsync();
             }
 
-            IEnumerable<SrvEEvent> liveEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
-            liveEvents = liveEvents.Where(x => x.Status != "completed" && x.Status != "canceled");
+            IEnumerable<SrvEvent> allEvents = await _eventService.GetEventsAsync(0);
+            IEnumerable<SrvEvent> liveEvents = allEvents.Where(x => x.Status == EnumEventStatus.Live);
 
-            foreach (var liveEvent in liveEvents)
+            IEnumerable<SrvEEvent> allEEventsEvenbrite = await _eEventService.GetListEventsByOrganizationIdAsync();
+            IEnumerable<SrvEEvent> liveEventsEvenbrite = allEEventsEvenbrite.Where(x => x.Status != "completed" && x.Status != "canceled");
+
+            var activeEvenbriteIds = new HashSet<long>(liveEventsEvenbrite.Select(e => e.Id));
+            var staleLocalLiveEvents = liveEvents.Where(e => !activeEvenbriteIds.Contains(e.IdEventbride));
+
+            if (staleLocalLiveEvents.Any())
+            {
+                var staleEEvents = allEEventsEvenbrite.Where(e => staleLocalLiveEvents.Any(le => le.IdEventbride == e.Id));
+                var updatedEvents = _eventService.GetEventsByEEvents(staleEEvents);
+                await _eventService.UpdateEventsAsync(updatedEvents);
+            }
+
+            foreach (var liveEvent in liveEventsEvenbrite)
             {
                 var eOrders = await _eOrderService.GetListOrdersByEventIdAsync(liveEvent.Id);
 
@@ -102,10 +117,10 @@ namespace PPDesk.Service.Services.PP
 
                 var eEvents = await _eEventService.GetListEventsByOrganizationIdAsync();
 
-                var events = _eventService.GetEventsByEEvents(eEvents);
+                var events = _eventService.GetEventsByEEvents([liveEvent]);
                 await _eventService.UpsertEventsAsync(events);
 
-                var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync(eEvents.Select(x => x.Id));
+                var tickets = await _eTicketClassService.GetListTicketClassesByEventIdsAsync([liveEvent.Id]);
 
                 var tables = _tableService.GetTablesByETicketClasses(tickets);
                 await _tableService.UpsertTablesAsync(tables);

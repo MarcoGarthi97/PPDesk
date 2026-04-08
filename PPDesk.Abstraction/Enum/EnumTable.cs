@@ -17,5 +17,6 @@ namespace PPDesk.Abstraction.Enum
     {
         SessioneGdr = 0,
         Multitavolo = 1,
+        LaboratorioCreativo = 2,
     }
 }

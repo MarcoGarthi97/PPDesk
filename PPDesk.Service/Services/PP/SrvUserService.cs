@@ -4,10 +4,8 @@ using PPDesk.Abstraction.DTO.Service.Eventbrite.Order;
 using PPDesk.Abstraction.DTO.Service.PP.User;
 using PPDesk.Abstraction.Helper;
 using PPDesk.Repository.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PPDesk.Service.Services.PP
