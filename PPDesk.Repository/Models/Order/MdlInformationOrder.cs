@@ -33,5 +33,7 @@ namespace PPDesk.Abstraction.DTO.Repository.Order
         public string Master { get; set; }
         [Column("UserPresence")]
         public bool? UserPresence { get; set; }
+        [Column("StartDate")]
+        public DateTime StartDate { get; set; }
     }
 }

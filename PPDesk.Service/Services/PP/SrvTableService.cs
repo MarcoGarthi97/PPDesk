@@ -34,12 +34,14 @@ namespace PPDesk.Service.Services.PP
         private readonly IMdlTableRepository _tableRepository;
         private readonly ISrvTableOrchestratorBuilder _tableBuilder;
         private readonly IMapper _mapper;
+        private readonly ISrvLiveCacheService _cacheService;
 
-        public SrvTableService(IMdlTableRepository tableRepository, IMapper mapper, ISrvTableOrchestratorBuilder tableBuilder)
+        public SrvTableService(IMdlTableRepository tableRepository, IMapper mapper, ISrvTableOrchestratorBuilder tableBuilder, ISrvLiveCacheService cacheService)
         {
             _tableRepository = tableRepository;
             _mapper = mapper;
             _tableBuilder = tableBuilder;
+            _cacheService = cacheService;
         }
 
         public async Task CreateTableTablesAsync()
@@ -127,12 +129,21 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlTable = _mapper.Map<MdlTable>(srvTable);
             await _tableRepository.UpdateTableAsync(mdlTable);
+
+            var informationTable = await _tableRepository.GetInformationTableByIdAsync(srvTable.Id);
+            if (informationTable != null)
+            {
+                var srvInformationTable = _mapper.Map<SrvInformationTable>(informationTable);
+                _cacheService.UpdateLiveTable(srvInformationTable);
+            }
         }
 
         public async Task UpdateInformationTableAsync(SrvInformationTable srvTable)
         {
             var mdlTable = _mapper.Map<MdlInformationTable>(srvTable);
             await _tableRepository.UpdateInformationTableAsync(mdlTable);
+
+            _cacheService.UpdateLiveTable(srvTable);
         }
     }
 }

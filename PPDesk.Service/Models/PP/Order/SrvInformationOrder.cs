@@ -17,5 +17,6 @@ namespace PPDesk.Abstraction.DTO.Service.PP.Order
         public string GdrName { get; set; }
         public string Master { get; set; }
         public bool UserPresence { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }
