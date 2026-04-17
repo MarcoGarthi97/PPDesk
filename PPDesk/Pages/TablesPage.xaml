@@ -105,6 +105,7 @@
         </Grid>
 
         <controls:DataGrid Grid.Row="2"
+        x:Name="TablesDataGrid"
         ItemsSource="{Binding Tables}"
         AutoGenerateColumns="False"
         IsReadOnly="True"

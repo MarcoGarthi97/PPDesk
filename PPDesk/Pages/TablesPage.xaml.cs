@@ -76,6 +76,7 @@ namespace PPDesk.Pages
         {
             if (SrvAppConfigurationStorage.DatabaseConfiguration.DatabaseExists)
             {
+                this.Loaded += TablesPage_LoadedForColumnConfig;
                 InitializeComboBoxesAsync();
                 TablesCountAsync();
                 LoadTablesAsync();
@@ -83,6 +84,34 @@ namespace PPDesk.Pages
             else
             {
                 this.Loaded += TablesPage_Loaded;
+            }
+        }
+
+        private void TablesPage_LoadedForColumnConfig(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= TablesPage_LoadedForColumnConfig;
+            ConfigureColumnVisibility();
+        }
+
+        private void ConfigureColumnVisibility()
+        {
+            if (SrvAppConfigurationStorage.EventLiveDefault)
+            {
+                var dataGrid = this.FindName("TablesDataGrid") as DataGrid;
+                if (dataGrid != null)
+                {
+                    var eventNameColumn = dataGrid.Columns.FirstOrDefault(c => c.Tag?.ToString() == "EventName");
+                    if (eventNameColumn != null)
+                    {
+                        eventNameColumn.Visibility = Visibility.Collapsed;
+                    }
+
+                    var statusEventColumn = dataGrid.Columns.FirstOrDefault(c => c.Tag?.ToString() == "EventStatus");
+                    if (statusEventColumn != null)
+                    {
+                        statusEventColumn.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
         }
 

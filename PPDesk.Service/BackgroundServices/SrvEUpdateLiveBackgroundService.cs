@@ -21,14 +21,16 @@ namespace PPDesk.Service.BackgroundServices
     public class SrvEUpdateLiveBackgroundService : BackgroundService, ISrvEUpdateLiveBackgroundService
     {
         private readonly ISrvDatabaseService _databaseService;
+        private readonly ISrvLiveCacheService _cacheService;
         private readonly ILogger<SrvEUpdateLiveBackgroundService> _logger;
         private TimeSpan _updateInterval = SrvAppConfigurationStorage.LiveBackgroundServiceConfiguration != null ? TimeSpan.FromMinutes(SrvAppConfigurationStorage.LiveBackgroundServiceConfiguration.MinutesInterval) : TimeSpan.FromMinutes(10);
         private CancellationTokenSource _manualCancellationTokenSource;
         private Task _manualTask;
 
-        public SrvEUpdateLiveBackgroundService(ISrvDatabaseService databaseService, ILogger<SrvEUpdateLiveBackgroundService> logger)
+        public SrvEUpdateLiveBackgroundService(ISrvDatabaseService databaseService, ISrvLiveCacheService cacheService, ILogger<SrvEUpdateLiveBackgroundService> logger)
         {
             _databaseService = databaseService;
+            _cacheService = cacheService;
             _logger = logger;
         }
 
@@ -57,6 +59,9 @@ namespace PPDesk.Service.BackgroundServices
             try
             {
                 await _databaseService.UpdateLiveDataAsync();
+
+                _cacheService.ClearAll();
+                _logger.LogInformation("Cache invalidated after live data update");
             }
             catch (Exception ex)
             {

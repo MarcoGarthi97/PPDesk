@@ -28,6 +28,7 @@ namespace PPDesk.Repository.Repositories
         Task<IEnumerable<MdlInformationTable>> GetAllInformationTablesAsync();
         Task<IEnumerable<MdlTable>> GetAllTablesAsync();
         Task<IEnumerable<MdlInformationTable>> GetInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType, int page, int limit);
+        Task<MdlInformationTable> GetInformationTableByIdAsync(long id);
         Task<MdlTable> GetTableByIdEventbride(long idEventbride);
         Task InsertTablesAsync(IEnumerable<MdlTable> tables);
         Task UpdateInformationTableAsync(MdlInformationTable table);
@@ -151,6 +152,18 @@ namespace PPDesk.Repository.Repositories
 
             var connection = await _connectionFactory.CreateConnectionAsync();
             return await connection.QueryAsync<MdlInformationTable>(sql);
+        }
+
+        public async Task<MdlInformationTable> GetInformationTableByIdAsync(long id)
+        {
+            string sql = @"SELECT t.Id, e.Name as EventName, e.Status as EventStatus, t.GdrName, t.Capacity, t.QuantitySold, t.StartDate, t.EndDate, t.Master, t.Type as TableType, t.AllUsersPresence, t.Position
+                from TABLES t
+                join EVENTS e
+                on t.EventIdEventbride = e.IdEventbride
+                WHERE t.Id = @id;";
+
+            var connection = await _connectionFactory.CreateConnectionAsync();
+            return await connection.QueryFirstOrDefaultAsync<MdlInformationTable>(sql, new { id });
         }
 
         public async Task<int> CountInformationTablesAsync(string eventName, string gdrName, string master, EnumEventStatus? eventStatus, EnumTableType? tableType)

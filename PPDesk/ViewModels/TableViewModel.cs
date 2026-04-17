@@ -22,6 +22,7 @@ namespace PPDesk.ViewModels
     {
         private readonly ISrvTableService _tableService;
         private readonly ISrvEventService _eventService;
+        private readonly ISrvLiveCacheService _cacheService;
         private IEnumerable<SrvInformationTable> _tablesList = new List<SrvInformationTable>();
         private bool _loadFast;
         private string? _totalRecordsText;
@@ -99,12 +100,13 @@ namespace PPDesk.ViewModels
         public int _page = 0;
         public int _count = -1;
 
-        public TableViewModel(ISrvTableService tableService, ISrvEventService eventService)
+        public TableViewModel(ISrvTableService tableService, ISrvEventService eventService, ISrvLiveCacheService cacheService)
         {
             _tableService = tableService;
+            _eventService = eventService;
+            _cacheService = cacheService;
             LoadTablesCommand = new AsyncRelayCommand(LoadTablesAsync);
             _loadFast = SrvAppConfigurationStorage.DatabaseConfiguration.LoadFast;
-            _eventService = eventService;
         }
 
         public async Task LoadTablesAsync()
@@ -179,7 +181,20 @@ namespace PPDesk.ViewModels
 
             if (_loadFast)
             {
-                if (!_tablesList.Any())
+                if (EventStatus.HasValue && EventStatus.Value == EnumEventStatus.Live)
+                {
+                    var cachedTables = _cacheService.GetLiveTables();
+                    if (cachedTables != null)
+                    {
+                        _tablesList = cachedTables;
+                    }
+                    else
+                    {
+                        _tablesList = await _tableService.GetAllInformationTablesAsync();
+                        _cacheService.SetLiveTables(_tablesList.Where(t => t.EventStatus == EnumEventStatus.Live));
+                    }
+                }
+                else if (!_tablesList.Any())
                 {
                     _tablesList = await _tableService.GetAllInformationTablesAsync();
                 }

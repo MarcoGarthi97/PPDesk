@@ -31,11 +31,13 @@ namespace PPDesk.Service.Services.PP
     {
         private readonly IMdlOrderRepository _orderRepository;
         private readonly IMapper _mapper;
+        private readonly ISrvLiveCacheService _cacheService;
 
-        public SrvOrderService(IMdlOrderRepository orderRepository, IMapper mapper)
+        public SrvOrderService(IMdlOrderRepository orderRepository, IMapper mapper, ISrvLiveCacheService cacheService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _cacheService = cacheService;
         }
 
         public async Task CreateTableOrdersAsync()
@@ -109,6 +111,8 @@ namespace PPDesk.Service.Services.PP
         {
             var mdlOrder = _mapper.Map<MdlInformationOrder>(srvOrder);
             await _orderRepository.UpdateInformationOrderAsync(mdlOrder);
+
+            _cacheService.UpdateLiveOrder(srvOrder);
         }
 
         public async Task<bool> CheckAllUsersPresenceAsync(long tableIdEventbride)

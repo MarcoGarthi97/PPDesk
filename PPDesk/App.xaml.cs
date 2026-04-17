@@ -90,6 +90,8 @@ namespace PPDesk
             services.AddAutoMapper(typeof(App).Assembly,
                           typeof(SrvVersionService).Assembly);
 
+            services.AddMemoryCache();
+
             services.AddSharedLibrary();
             services.AddSharedLibraryServices();
             services.AddSharedLibraryRepositories();

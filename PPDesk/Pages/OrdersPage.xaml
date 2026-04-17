@@ -115,6 +115,7 @@ KeyDown="OnPageKeyDown" />
         </Grid>
 
         <controls:DataGrid Grid.Row="2"
+    x:Name="OrdersDataGrid"
     ItemsSource="{Binding Orders}"
     AutoGenerateColumns="False"
     IsReadOnly="True"
@@ -129,7 +130,7 @@ KeyDown="OnPageKeyDown" />
                 <controls:DataGridTextColumn Header="Master" Tag="Master" Binding="{Binding Master}" />
                 <controls:DataGridTextColumn Header="Tipologia" Tag="TypeTable" Binding="{Binding TypeTable, Converter={StaticResource EnumTableTypeConverter }}" />
                 <controls:DataGridTextColumn Header="Posti prenotati" Tag="Quantity" Binding="{Binding Quantity}" />
-                <controls:DataGridTextColumn Header="Data ordine" Tag="DateOrder" Binding="{Binding DateOrder, Converter={StaticResource DateConverter}}" />
+                <controls:DataGridTextColumn Header="Data inizio sessione" Tag="StartDate" Binding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
 
                 <controls:DataGridTemplateColumn Header="Azioni">
                     <controls:DataGridTemplateColumn.CellTemplate>

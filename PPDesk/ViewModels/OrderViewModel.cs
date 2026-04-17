@@ -23,6 +23,7 @@ namespace PPDesk.ViewModels
         private readonly ISrvOrderService _orderService;
         private readonly ISrvEventService _eventService;
         private readonly ISrvTableService _tableService;
+        private readonly ISrvLiveCacheService _cacheService;
         private IEnumerable<SrvInformationOrder> _ordersList = new List<SrvInformationOrder>();
         private bool _loadFast;
         private string? _totalRecordsText;
@@ -106,11 +107,12 @@ namespace PPDesk.ViewModels
         public int _page = 0;
         public int _count = -1;
 
-        public OrderViewModel(ISrvOrderService orderService, ISrvEventService eventService, ISrvTableService tableService)
+        public OrderViewModel(ISrvOrderService orderService, ISrvEventService eventService, ISrvTableService tableService, ISrvLiveCacheService cacheService)
         {
             _orderService = orderService;
             _eventService = eventService;
             _tableService = tableService;
+            _cacheService = cacheService;
 
             LoadOrdersCommand = new AsyncRelayCommand(LoadOrdersAsync);
             _loadFast = SrvAppConfigurationStorage.DatabaseConfiguration.LoadFast;
@@ -188,7 +190,20 @@ namespace PPDesk.ViewModels
 
             if (_loadFast)
             {
-                if (!_ordersList.Any())
+                if (EventStatus.HasValue && EventStatus.Value == EnumEventStatus.Live)
+                {
+                    var cachedOrders = _cacheService.GetLiveOrders();
+                    if (cachedOrders != null)
+                    {
+                        _ordersList = cachedOrders;
+                    }
+                    else
+                    {
+                        _ordersList = await _orderService.GetAllInformationOrdersAsync();
+                        _cacheService.SetLiveOrders(_ordersList.Where(o => o.StatusEvent == EnumEventStatus.Live));
+                    }
+                }
+                else if (!_ordersList.Any())
                 {
                     _ordersList = await _orderService.GetAllInformationOrdersAsync();
                 }
@@ -268,10 +283,10 @@ namespace PPDesk.ViewModels
                         ? ordersTemp.OrderBy(x => x.Name).ToList()
                         : ordersTemp.OrderByDescending(x => x.Name).ToList();
                     break;
-                case "DateOrder":
+                case "StartDate":
                     ordersTemp = isAscending
-                        ? ordersTemp.OrderBy(x => x.DateOrder).ToList()
-                        : ordersTemp.OrderByDescending(x => x.DateOrder).ToList();
+                        ? ordersTemp.OrderBy(x => x.StartDate).ToList()
+                        : ordersTemp.OrderByDescending(x => x.StartDate).ToList();
                     break;
                 case "Quantity":
                     ordersTemp = isAscending
